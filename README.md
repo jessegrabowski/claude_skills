@@ -20,12 +20,18 @@ Entry points, invoked directly:
 - `split-and-commit` -- break working changes into logical commits
 - `issue` / `lazy-pr` -- file a GitHub issue or open a PR
 
-The 22 focused analysis passes those delegate to live under `skills/audit/`, which
-is a plugin rather than a plain skill, so they namespace instead of crowding the
+Alongside those, 22 narrower single-axis passes live under `skills/audit/`, which is
+a plugin rather than a plain skill, so they namespace instead of crowding the
 top-level slash list:
 
-- `/audit` -- routes to the right pass when you haven't named one
 - `/audit:input-validation`, `/audit:solid-principles`, `/audit:exception-flow-analysis`, ...
+- `/audit` -- routes to the right pass when you haven't named one
+
+They are invoked explicitly, never picked up on their own: every pass sets
+`disable-model-invocation`, so it fires only from its own slash command or from the
+`/audit` router. The entry points above do not call into them -- reach for a pass
+when you want one axis examined in depth, and an entry point when you want a verdict
+on a whole change.
 
 They group into security (`initial-security-analysis` first, `comprehensive-security-report`
 last), design (`solid-principles`, `design-pattern-implementation`,
