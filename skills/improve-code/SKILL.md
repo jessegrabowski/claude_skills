@@ -1,6 +1,6 @@
 ---
 name: improve-code
-description: Full-spectrum code review — correctness, performance, design (duplication, anti-patterns), and style against your stated conventions. Tiered findings with an offer to apply. Pass `style` to skip bug-hunting and report only behavior-preserving findings.
+description: Full-spectrum code review — correctness, performance, design (duplication, anti-patterns), and style against your stated conventions. Reports tiered findings and offers to apply them. Pass `style` to skip bug-hunting and report only behavior-preserving findings; pass `--apply` to apply them directly instead of asking first. Trigger even when the user doesn't name the skill — "clean this module up", "make this more readable", "do a quality pass on parser.py".
 disable-model-invocation: false
 metadata:
   tags: [code-review, code-quality, refactoring, code-style, docstrings, audit]
@@ -16,7 +16,10 @@ Treat every line as if it will run in production at scale, maintained by someone
 
 $ARGUMENTS
 
-If the arguments contain the word `style`, run in **style-only mode**: skip the Bugs & correctness tier entirely and report only behavior-preserving findings (Structure, Violations, Polish).
+Two modifiers can appear anywhere in the arguments; everything else is the file scope.
+
+- `style` — **style-only mode**: skip the Bugs & correctness tier entirely and report only behavior-preserving findings (Structure, Violations, Polish).
+- `--apply` — **apply mode**: don't stop at the report. Apply every behavior-preserving finding (Structure, Violations, Polish) directly, then report what you changed. Bugs are still proposed for individual approval rather than applied — see *Applying fixes*. `--apply style` therefore means "clean this up, touch nothing behavioral", which is the common case for a professionalism pass.
 
 ## The source of truth
 
@@ -167,10 +170,14 @@ Show a tight before → after only when it makes the fix unambiguous; don't quot
 
 Close with a two-line summary (how many findings per tier, the dominant theme).
 
+**In apply mode**, this report is written *after* the work, in the past tense, and covers what you changed rather than what you propose — same tiers, same `path:line` specificity, so the user can audit the diff against it. Findings you deliberately held back still get listed, with the reason. Don't also emit a proposal-shaped report first; one report, after the fact.
+
 ## Applying fixes
 
-Offer to apply, per tier — all of it, one tier, or a subset the user picks:
+By default, offer to apply, per tier — all of it, one tier, or a subset the user picks. Under `--apply`, skip the offer and apply the behavior-preserving tiers straight away. Either way the per-tier rules below hold:
 
-- **Bugs** are never bulk-applied. Each is a separate proposal the user approves individually, since each changes behavior. When a bug fix is applied, promote its repro to a regression test in the project's test suite — a confirmed bug without a test is a bug waiting to come back.
-- **Structure** fixes are behavior-preserving by intent but not by construction — after applying any, run the project's test suite and compare against the baseline status from the procedure; report the result.
+- **Bugs** are never bulk-applied, and `--apply` does not change that — each one changes behavior, so it stays a separate proposal the user approves individually. When a bug fix is applied, promote its repro to a regression test in the project's test suite — a confirmed bug without a test is a bug waiting to come back.
+- **Structure** fixes are behavior-preserving by intent but not by construction — after applying any, run the project's test suite and compare against the baseline status from the procedure; report the result. If a structure fix is large enough that you'd want the user to weigh in on the shape (splitting a public class, reorganizing a module's API), surface it as a proposal even under `--apply` rather than committing them to your design taste.
 - **Violations and Polish** are safe by construction; apply and move on. If while applying you find that a "style" fix would actually alter behavior, stop and reclassify it instead.
+
+Applying is a refactor, not a rewrite. The bar for every edit you make: a senior engineer reading the diff sees only changes that make the code clearer, tighter, or more idiomatic — never a change in what it does. Public signatures, return types, side effects, and observable output stay as they are; when a cleanup would change the API contract, surface it instead of silently doing it.
