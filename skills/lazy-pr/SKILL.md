@@ -22,7 +22,13 @@ Before drafting anything, confirm that all three of these ran against the work i
 
 Check the conversation history, not your memory of intent. Evidence that a pass ran means the skill was actually invoked and its changes landed — not that the code "looks fine" or that you were careful while writing it.
 
-If any of the three is missing, say which ones and run them now, in that order, before continuing. `improve-code` and `improve-tests` produce edits, so they must precede `split-and-commit`; if either one lands changes after commits were made, `split-and-commit` runs again for the new work. Do not open a PR with an uncommitted working tree.
+If any of the three is missing, say which ones and run them now, in that order, before continuing.
+
+**Run the missing audits with `--apply`** — `improve-code --apply`, `improve-tests --apply`. The gate exists to get the branch into shape, and a findings report the user has to adjudicate tier by tier stalls the PR they just asked for. `--apply` lands the behavior-preserving work directly and reports it afterward.
+
+Both skills hold back their destructive tier even under `--apply`: `improve-code` still proposes each bug fix individually, and `improve-tests` still proposes each test deletion. Those come back to the user as questions. Answer them before drafting — a PR opened over an unresolved bug finding is worse than a slow one.
+
+`improve-code` and `improve-tests` produce edits, so they must precede `split-and-commit`; if either one lands changes after commits were made, `split-and-commit` runs again for the new work. Do not open a PR with an uncommitted working tree.
 
 If the user explicitly tells you to skip a pass, say once that you're skipping it and proceed. Their call.
 
