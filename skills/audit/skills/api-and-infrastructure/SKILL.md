@@ -1,6 +1,6 @@
 ---
 name: api-and-infrastructure
-description: Reviews API and infrastructure security configuration, including endpoints, headers, transport, and deployment settings. Use when auditing API or infrastructure hardening.
+description: Reviews API and infrastructure security configuration, including endpoints, headers, transport, and deployment settings.
 license: CC0-1.0
 metadata:
   category: security

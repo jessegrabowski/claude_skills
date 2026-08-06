@@ -1,6 +1,6 @@
 ---
 name: initial-security-analysis
-description: Performs a first-pass security audit of project structure and attack surface to map risk and entry points. Use as the starting point for a security review.
+description: Performs a first-pass security audit of project structure and attack surface to map risk and entry points.
 license: CC0-1.0
 metadata:
   category: security

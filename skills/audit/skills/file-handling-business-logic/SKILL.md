@@ -1,6 +1,6 @@
 ---
 name: file-handling-business-logic
-description: Reviews file upload and handling for path traversal, type validation, storage, and related logic flaws. Use when auditing file upload or processing security.
+description: Reviews file upload and handling for path traversal, type validation, storage, and related logic flaws.
 license: CC0-1.0
 metadata:
   category: security

@@ -1,6 +1,6 @@
 ---
 name: design-pattern-implementation
-description: Reviews how design patterns are used or misused across the codebase and where patterns would help. Use when evaluating architecture, pattern fit, or over-engineering.
+description: Reviews how design patterns are used or misused across the codebase and where patterns would help.
 license: CC0-1.0
 metadata:
   category: code-quality

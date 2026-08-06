@@ -1,6 +1,6 @@
 ---
 name: logging-monitoring
-description: Reviews logging and monitoring for security visibility, sensitive-data leakage, and audit coverage. Use when auditing observability and security logging.
+description: Reviews logging and monitoring for security visibility, sensitive-data leakage, and audit coverage.
 license: CC0-1.0
 metadata:
   category: security

@@ -1,6 +1,6 @@
 ---
 name: solid-principles
-description: Audits code for adherence to the five SOLID principles and reports violations with concrete fixes. Use when reviewing class design, dependency structure, or object-oriented quality.
+description: Audits code for adherence to the five SOLID principles and reports violations with concrete fixes.
 license: CC0-1.0
 metadata:
   category: code-quality

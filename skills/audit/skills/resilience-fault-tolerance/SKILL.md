@@ -1,6 +1,6 @@
 ---
 name: resilience-fault-tolerance
-description: Evaluates resilience and fault tolerance, including failure modes, retries, timeouts, and graceful degradation. Use when reviewing reliability under failure conditions.
+description: Evaluates resilience and fault tolerance, including failure modes, retries, timeouts, and graceful degradation.
 license: CC0-1.0
 metadata:
   category: code-quality

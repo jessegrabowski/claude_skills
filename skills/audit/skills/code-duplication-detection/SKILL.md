@@ -1,6 +1,6 @@
 ---
 name: code-duplication-detection
-description: Detects duplicated and near-duplicate code across the codebase and suggests consolidation. Use when reviewing for copy-paste code, repeated logic, or DRY violations.
+description: Detects duplicated and near-duplicate code across the codebase and suggests consolidation.
 license: CC0-1.0
 metadata:
   category: code-quality

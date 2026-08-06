@@ -1,6 +1,6 @@
 ---
 name: testing-implementation
-description: Evaluates test implementation and coverage, identifying gaps, weak assertions, and untested paths. Use when auditing test quality, coverage, or testing strategy.
+description: Evaluates test implementation and coverage, identifying gaps, weak assertions, and untested paths.
 license: CC0-1.0
 metadata:
   category: code-quality

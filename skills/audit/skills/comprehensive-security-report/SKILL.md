@@ -1,6 +1,6 @@
 ---
 name: comprehensive-security-report
-description: Aggregates findings from the other security audits into one prioritized security report. Use after running individual security reviews to produce a consolidated report.
+description: Aggregates findings from the other security audits into one prioritized security report.
 license: CC0-1.0
 metadata:
   category: security

@@ -1,6 +1,6 @@
 ---
 name: authorization-implementation
-description: Analyzes authorization and access-control logic across routes and resources for privilege and enforcement flaws. Use when auditing authorization, RBAC, or access control.
+description: Analyzes authorization and access-control logic across routes and resources for privilege and enforcement flaws.
 license: CC0-1.0
 metadata:
   category: security

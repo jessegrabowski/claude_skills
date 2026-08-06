@@ -1,6 +1,6 @@
 ---
 name: authentication-flow-review
-description: Conducts a comprehensive authentication security review covering login, sessions, tokens, and credential handling. Use when auditing authentication for vulnerabilities.
+description: Conducts a comprehensive authentication security review covering login, sessions, tokens, and credential handling.
 license: CC0-1.0
 metadata:
   category: security

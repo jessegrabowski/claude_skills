@@ -1,6 +1,6 @@
 ---
 name: session-cookie-security
-description: Analyzes session and cookie security, including flags, expiration, fixation, and storage. Use when auditing session management and cookie configuration.
+description: Analyzes session and cookie security, including flags, expiration, fixation, and storage.
 license: CC0-1.0
 metadata:
   category: security

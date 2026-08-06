@@ -1,6 +1,6 @@
 ---
 name: secrets-management-audit
-description: Scans the codebase for hardcoded secrets and weak secret handling, and checks rotation and key management. Use when auditing API keys, passwords, tokens, or secret storage.
+description: Scans the codebase for hardcoded secrets and weak secret handling, and checks rotation and key management.
 license: CC0-1.0
 metadata:
   category: security

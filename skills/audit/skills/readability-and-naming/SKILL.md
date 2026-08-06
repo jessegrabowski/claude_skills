@@ -1,6 +1,6 @@
 ---
 name: readability-and-naming
-description: Reviews readability, naming conventions, and clarity, flagging confusing identifiers and structure. Use when auditing for readability, naming consistency, or style.
+description: Reviews readability, naming conventions, and clarity, flagging confusing identifiers and structure.
 license: CC0-1.0
 metadata:
   category: code-quality

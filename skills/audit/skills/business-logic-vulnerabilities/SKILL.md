@@ -1,6 +1,6 @@
 ---
 name: business-logic-vulnerabilities
-description: Analyzes business logic for security flaws such as workflow bypasses, race conditions, and abuse cases. Use when reviewing application logic for exploitable behavior.
+description: Analyzes business logic for security flaws such as workflow bypasses, race conditions, and abuse cases.
 license: CC0-1.0
 metadata:
   category: security

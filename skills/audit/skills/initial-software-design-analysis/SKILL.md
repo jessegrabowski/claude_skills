@@ -1,6 +1,6 @@
 ---
 name: initial-software-design-analysis
-description: Produces a first-pass architecture and design review covering structure, maintainability, and scalability. Use when onboarding to or assessing the design of a codebase.
+description: Produces a first-pass architecture and design review covering structure, maintainability, and scalability.
 license: CC0-1.0
 metadata:
   category: code-quality

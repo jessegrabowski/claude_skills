@@ -1,6 +1,6 @@
 ---
 name: error-handling-resilience
-description: Performs a comprehensive error-handling review across the codebase, checking coverage, propagation, and recovery. Use when auditing how the system handles and recovers from failures.
+description: Performs a comprehensive error-handling review across the codebase, checking coverage, propagation, and recovery.
 license: CC0-1.0
 metadata:
   category: code-quality

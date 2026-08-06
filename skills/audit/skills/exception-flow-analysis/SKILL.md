@@ -1,6 +1,6 @@
 ---
 name: exception-flow-analysis
-description: Traces how errors and exceptions flow through critical code paths to find swallowed errors and broken propagation. Use when analyzing exception handling on important paths.
+description: Traces how errors and exceptions flow through critical code paths to find swallowed errors and broken propagation.
 license: CC0-1.0
 metadata:
   category: code-quality

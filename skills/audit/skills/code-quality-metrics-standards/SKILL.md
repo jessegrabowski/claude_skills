@@ -1,6 +1,6 @@
 ---
 name: code-quality-metrics-standards
-description: Analyzes code complexity and adherence to quality standards, flagging overly complex functions and metric outliers. Use when auditing maintainability, cyclomatic complexity, or coding-standard compliance.
+description: Analyzes code complexity and adherence to quality standards, flagging overly complex functions and metric outliers.
 license: CC0-1.0
 metadata:
   category: code-quality

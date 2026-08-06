@@ -1,6 +1,6 @@
 ---
 name: input-validation
-description: Reviews input validation and sanitization across the application for injection and malformed-input risks. Use when auditing how untrusted input is handled.
+description: Reviews input validation and sanitization across the application for injection and malformed-input risks.
 license: CC0-1.0
 metadata:
   category: security

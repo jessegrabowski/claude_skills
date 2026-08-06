@@ -1,6 +1,6 @@
 ---
 name: database-security
-description: Examines all database interactions for injection, access control, encryption, and data-exposure risks. Use when auditing database and data-layer security.
+description: Examines all database interactions for injection, access control, encryption, and data-exposure risks.
 license: CC0-1.0
 metadata:
   category: security
