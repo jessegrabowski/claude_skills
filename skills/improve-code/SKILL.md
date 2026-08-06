@@ -1,86 +1,176 @@
 ---
 name: improve-code
-description: Standards and professionalism pass over source code — refactors in place for self-documentation, naming, structure, docstrings, formatting, and idiom. Use whenever the user asks to improve, clean up, professionalize, tidy, polish, modernize, or raise the quality bar on code. Applies to test files too when they're part of the work; for a dedicated test-quality or coverage audit, prefer improve-tests. Trigger even when the user doesn't say "improve-code" explicitly — e.g. "clean this module up", "make this more readable", "do a quality pass on parser.py".
+description: Full-spectrum code review — correctness, performance, design (duplication, anti-patterns), and style against your stated conventions. Tiered findings with an offer to apply. Pass `style` to skip bug-hunting and report only behavior-preserving findings.
+disable-model-invocation: false
+metadata:
+  tags: [code-review, code-quality, refactoring, code-style, docstrings, audit]
 ---
 
-You will do a standards and professionalism pass over the files requested in the arguments, applying the improvements directly. If no files are specified, focus only on the code currently being worked on. Ask for clarification if there are no obvious candidates.
+## Code Review & Improvement Audit
 
-Test files are in scope: when they're among the requested files or part of the work in progress, hold them to the same standards as everything else — don't carve them out. The separate `improve-tests` skill is for a dedicated audit of test *quality and coverage*; reach for it only when that's specifically what the user wants, not as a reason to skip tests that are sitting right in front of you.
+Assess the code in the files named in the arguments — correctness, design, and style — and report concrete, justified improvements. If no files are specified, focus on the code currently being worked on (the uncommitted diff, or the files edited this session). Ask for clarification only if there are no obvious candidates.
 
-This is a refactor, not a rewrite. The bar is: a senior engineer reading the diff should see only changes that make the code clearer, tighter, or more idiomatic — never a change in what it does.
-
-There are two ways to fail here, and the second is the one to watch for. The first is over-reaching — changing behavior in the name of cleanliness; the rest of this skill guards against that. The second, quieter failure is under-delivering: a timid pass that renames one variable, reflows a line, and calls it done while the cruft that actually makes the code hard to trust sits untouched. Read the code the way a demanding reviewer would — go looking for what genuinely costs the next maintainer, and fix it. A pass a maintainer wouldn't notice wasn't worth making.
+Treat every line as if it will run in production at scale, maintained by someone sleep-deprived at 2AM. If it wouldn't survive that reality, it doesn't pass.
 
 ## Input
 
 $ARGUMENTS
 
-## Before you start
+If the arguments contain the word `style`, run in **style-only mode**: skip the Bugs & correctness tier entirely and report only behavior-preserving findings (Structure, Violations, Polish).
 
-- **Preserve behavior.** Public signatures, return types, side effects, and observable output stay the same unless the user asks otherwise. When a cleanup would change the API contract, surface it instead of silently doing it.
-- **Match what's already there.** Infer the project's line length and style from its config (`pyproject.toml`, `setup.cfg`, `ruff.toml`, `.flake8`) and from the surrounding code. Adopt the codebase's conventions; don't impose your own.
-- **Verify when it matters.** If the pass touched executable code and tests exist, run them — a professionalism pass that breaks something is a net loss. If the diff is confined to comments, docstrings, and formatting, skip the suite; there's nothing new to verify and the run is wasted effort.
+## The source of truth
 
-## What "professional" means here
+Your authority, in priority order:
 
-### Self-documentation first
-- The code should explain itself through descriptive names and clear structure, so a comment becomes unnecessary. Reach for a better name or a smaller function before reaching for a comment.
-- No abbreviations unless universally recognized (`id`, `df`, `url` are fine; `cfg_mgr`, `proc_res` are not).
-- Functions are small and single-purpose. If a function needs a comment to mark where one responsibility ends and the next begins, it's two functions.
+1. **The user's global coding preferences** in `~/.claude/CLAUDE.md` — already in your context this session. These are not suggestions; they are the contract. The checklist below transcribes and operationalizes them. If this file and the checklist ever disagree (the file may have been edited since this skill was written), **the file wins** — re-read it and follow it.
+2. **Project config**: read the project's `pyproject.toml` (especially `[tool.ruff] line-length` / `[tool.black] line-length`) and any project `CLAUDE.md`. Line width, naming conventions, and idioms are project-specific, and the global rules explicitly defer to them. A 100-char habit reflowed into a 120-char project produces *inconsistent* code, which is itself a defect.
+3. **The surrounding code.** Match the idioms, naming, and structure of the file and module you're in. Local consistency beats personal preference. Only override a consistent local idiom when it violates a stated rule from (1) or (2) — and say so.
 
-### Comments and docstrings, sparingly
-- Comments are for future maintainers only: the *why* behind a non-obvious choice, a workaround, a subtle invariant. They are never section headings, changelog entries, or flags like `# changed this` / `# new`.
-- A comment explaining *what* straightforward code does is a refactoring signal — improve the code so the comment isn't needed, then delete it.
-- Write a docstring only when it adds information the signature and body don't already convey. No module docstrings. If you feel a docstring is needed just to say what the function does, that's a sign to refactor the function instead.
-- The minimalism rule decides *whether* a docstring exists. Once you decide it earns its place, it is structured — never freeform prose. Use proper NumPy sections (`Parameters`, `Returns`, `Raises`, `Yields`, ...), one entry per item. A function returning a tuple gets a `Returns` section with one named entry per element, not a paragraph describing them. Collapsing structure into prose is the most common failure here; resist it.
-- Use Sphinx roles for cross-references (`:func:`, `:class:`, `:mod:`) and the `:math:` role or a `.. math::` block for equations.
-- When you need the exact section ordering or syntax (e.g. how to format `Parameters` for optional args, `*args`, or multiple returns), consult `references/numpydoc-style-guide.rst` — the canonical numpydoc spec — rather than working from memory.
+When you cite a finding, name which of these it comes from — or, for bugs and design findings where the conventions are silent, state the concrete failure it causes. That keeps the audit honest and lets the user overrule you on the judgment calls.
 
-  ```
-  def rebuild_trained_shared(spec, idata):
-      """Reconstruct trained shared variables from a fitted idata.
+## How to conduct yourself
 
-      Parameters
-      ----------
-      spec : GPModelSpec
-          Model specification supplying the inducing-point and data variable names.
-      idata : xr.DataTree
-          Fitted inference data holding the trained point estimate.
+- **Direct, specific, unapologetic.** No hedging with "maybe" or "consider", no empty praise. Cite the symbol and the line — vague critique is useless critique. Assume the author is competent but rushed; dismantle the code, never the person.
+- **Do not duplicate the formatter or linter.** Whitespace, quote style, import sorting, trailing commas, line-length *mechanics* — ruff/black own these and fix them on save. Spending findings on them is noise. Your value is the layer they're blind to.
+- **Don't pad the report.** A nit that doesn't make the code meaningfully better is clutter — the same leanness you're auditing for applies to your own output. Every finding must earn its line.
+- **Don't under-deliver either.** Padding is the loud failure; the quiet one is a timid audit that flags a rename and a reflow and calls it done while the cruft that actually makes the code hard to trust sits untouched. Read the code the way a demanding reviewer would — go looking for what genuinely costs the next maintainer. An audit a maintainer wouldn't act on wasn't worth running.
+- If the code is genuinely good, say so — but only after trying to break it. Praise that survives a real attempt at destruction is worth something; praise that doesn't is noise.
 
-      Returns
-      -------
-      shared_params : dict
-          Maps each free RV's value variable to a shared holding its trained
-          unconstrained value.
-      replace_extras : dict
-          Maps ``spec.Z_var`` / ``spec.X_var`` / ``spec.y_var`` to shareds holding the
-          inducing points and training inputs/targets.
-      """
-  ```
+## Procedure
 
-### Structure and DRY
-- Collapse genuine duplication into a shared helper — but only real duplication. Two pieces of code that happen to look alike today yet change for different reasons are not duplication; forcing them together couples them wrongly.
-- Apply the rule of three: the second occurrence is tolerable, the third is the signal to factor out. Don't abstract on the first sight of a pattern — premature abstraction is as costly as duplication, and you rarely know the right shape until the third case shows you.
-- **In test files, weigh the rule of three much more heavily against extraction.** A test's value depends on a reader auditing it as one self-contained block — what was seeded, sampled, patched, and asserted, all visible without jumping to a fixture defined hundreds of lines away. Duplicated *setup* (repeated fixture-builder calls, monkeypatch/spy scaffolding, arrange-phase boilerplate) is usually worth keeping inline even at six or eight occurrences; a fragmented test costs the reader more than the duplication does. This is a strong presumption, not a prohibition — extract when the block is long enough to bury the assertion it exists to set up, when it encodes an invariant that must stay identical across tests, or when a signature change would otherwise mean editing it everywhere. When you do extract, keep the call site expressive enough that the test still reads on its own. Deduplicate *source* files normally.
-- Before writing a new helper, check whether one already exists — in the same module, in the project's utils, or in a dependency. Reinventing an existing utility is its own form of duplication.
-- Prefer simplicity over cleverness. An abstraction that exists mainly to look clever, or a dense one-liner that's proud of itself, costs the next reader more than it saved the author — unwind it. When complexity has crept in, refactor it out rather than commenting around it.
-- Dead code, unreachable branches, unused imports/variables, and commented-out scaffolding go. Stale markers go too: a TODO naming a real, current follow-up can stay, but "clean this up later" with no owner and no meaning is an apology, not information — cut it.
-- Imports belong at the top of the module, not buried inside functions. Local imports are a habitual model tic and are almost never warranted — hoist them up. The rare exceptions (breaking a genuine circular dependency, or guarding a heavy/optional dependency) should be obvious from context; everything else moves to the top.
+1. **Establish scope.** Named files if given; otherwise the uncommitted diff (staged + unstaged), falling back to the files edited this session. When the scope is a diff, confine findings to the changed code and what it directly touches — don't re-litigate untouched legacy code that happens to share a file. Audit a whole file only when it's named explicitly. If the scope is too large to audit exhaustively, prioritize (by centrality, churn, or the user's hint) and say explicitly what was skipped — a truncated audit that presents itself as complete is worse than a scoped one.
+2. **Read the config before the code.** `pyproject.toml`, project `CLAUDE.md`, lint and type-checker config.
+3. **Run the mechanical tools, and split their output by role.**
+   - *Formatter and linter* (`ruff check`, formatter dry-run): anything they flag is subtracted from your findings by construction — it gets fixed on save, so reporting it is noise.
+   - *Type checkers* (basedpyright / pyright / mypy — whichever the project configures; check `pyproject.toml` and dev dependencies, and respect the project's choice): run on the target files and harvest the diagnostics as **leads for the Bugs tier**. Verify each against the code before reporting — strict checkers produce false positives, and a parroted diagnostic is not a finding. Never resolve a diagnostic with a blanket `# type: ignore`; either the code is wrong or the annotation is.
+     - `basedpyright` is installed as a global uv tool (`~/.local/bin/basedpyright`), so it's available even when the project doesn't vendor a checker — invoke it with `basedpyright --pythonpath <project-venv-python> <files>` (e.g. `.pixi/envs/default/bin/python`) so it resolves imports against the project's environment. With no project pyright config it runs in **strict** mode and buries real signal under thousands of project-wide `reportUnknown*` / `reportMissingTypeArgument` / `reportUnusedCallResult` warnings; filter to the changed lines and lean on the high-value rules (`reportUnusedVariable`, `reportAttributeAccessIssue`, `reportCallIssue`, `reportArgumentType`, unreachable/possibly-unbound). Don't report a project's pre-existing strict-mode noise as a finding against the diff.
+   - *IDE diagnostics*: if running inside an IDE integration where a diagnostics tool is available (e.g. `mcp__ide__getDiagnostics` under the JetBrains or VS Code extension), pull diagnostics for the target files and treat them the same way as type-checker output. Skip silently when unavailable.
+4. **Note the baseline test status** before proposing anything — is the suite green right now? Post-apply failures must be attributable.
+5. **Read the code and audit** against the axes below.
+6. **Verify Bugs-tier candidates.** When a cheap repro is feasible, write a scratch script and run it. Label every Bugs finding **confirmed** (reproduced) or **plausible** (by inspection only) — never present inspection-level confidence as certainty.
 
-### Formatting
-- Reflow to use the full project line width — don't leave text wrapped short out of habit when the project allows wider lines, and don't overflow it either.
-- Follow PEP 8. Where an autoformatter (black, ruff) governs the project, defer to it rather than hand-formatting against it.
+## The audit
 
-### Performance with judgment
-- Prefer vectorized operations over explicit loops where it's natural (NumPy, pandas, Polars).
-- Hot paths earn their efficiency; cold paths earn their readability. Don't obfuscate a once-per-run setup function for a speedup that never matters, and don't leave an inner loop naive when it runs millions of times. Optimize where it counts, stay clear everywhere else.
+Each axis below states *why* it matters, because understanding the intent lets you judge the gray areas rather than pattern-match. Apply judgment, not a checklist-ticking reflex.
+
+### 1. Correctness
+
+Edge cases aren't "nice to have". Skipped in style-only mode.
+
+- Hidden bugs, unhandled edge cases, undefined behavior, concurrency hazards, API misuse.
+- If the code under review is numerical / scientific (array math, optimization, statistics, autodiff), read `numerics.md` in this skill's directory and apply its checklist as well. Skip it entirely for everything else — don't import numerics concerns into a web handler.
+- Error handling at real boundaries, not defensive theater. Flag silent exception swallowing — bare `except:` or `except Exception: pass` that hides failures. Errors should be specific and loud.
+- Input validation where it matters — and only there.
+- What happens when this breaks at 2AM? Failure modes should be observable (logging where the project logs), not silent.
+
+### 2. Performance & leanness
+
+Hot paths should be lean; obvious inefficiency is a defect even when it isn't premature optimization.
+
+- Algorithmic complexity — no silent O(n²) where O(n) works.
+- Redundant checks, work repeated inside a loop that could be hoisted out, recomputation of invariants, memory waste.
+
+### 3. Design, duplication & abstraction
+
+Abstractions must earn their keep — and duplication and over-abstraction are the two failure modes of the same judgment call, so weigh them together.
+
+- Is this the simplest thing that works? Is the complexity justified, or speculative? Flag generality that exists for a future that hasn't arrived.
+- Flag real duplication: copy-paste-modify functions differing by one parameter, near-identical branches that could be table-driven or parameterized, the same logic block repeated across a module.
+- But resist over-abstraction: don't extract a shared helper for a coincidental two-line overlap. The rule of three is a good prior. Two pieces of code that look alike today but change for different reasons are not duplication — forcing them together couples them wrongly.
+- **In test files, weigh the rule of three much more heavily against extraction.** A test's value depends on a reader auditing it as one self-contained block — what was seeded, sampled, patched, and asserted, all visible without jumping to a fixture defined hundreds of lines away. Duplicated *setup* (repeated fixture-builder calls, monkeypatch/spy scaffolding, arrange-phase boilerplate) is usually worth keeping inline even at six or eight occurrences; a fragmented test costs the reader more than the duplication does. This is a strong presumption, not a prohibition — flag an extraction when the block is long enough to bury the assertion it exists to set up, when it encodes an invariant that must stay identical across tests, or when a signature change would otherwise mean editing it everywhere. Deduplicate *source* files normally.
+- Flag anti-patterns that hurt maintainability: boolean flags that make one function do two things (and the boolean trap `do_thing(True, False)` — prefer keyword arguments or an enum); parameter lists too long to hold in your head; primitive obsession and dict-as-object where a dataclass or NamedTuple would self-document; mutable default arguments; hidden global state; functions that both compute and mutate; god functions/classes; leaky abstractions; a public surface larger than its actual clients need.
+- Coupling and cohesion: things that change together should live together; a module reaching deep into another's internals (`a.b.c.d`) is a missing interface. Flag inheritance used for code reuse where composition would be simpler and flatter.
+- Error-handling design should be consistent: one module shouldn't mix raising, returning None, and returning error codes for the same kind of failure. The API should follow least surprise — sensible defaults, no argument whose meaning depends on another argument's value.
+- Flag mixed abstraction levels within one function — raw string-mangling next to high-level orchestration means a helper is missing.
+- Flag functions doing several unrelated things, or grown long enough that they're hard to hold in your head — suggest a split.
+
+### 4. Naming & readability
+
+The code should read as documentation; a good name removes the need for a comment.
+
+- Names reveal intent. Flag cryptic abbreviations, single letters outside idiomatic/math contexts (`i`, `j`, `x`), and names that describe type rather than role (`data`, `tmp`, `obj`, `result2`).
+- Flag magic numbers and strings that should be named constants.
+- Names should be consistent with how the surrounding code names the same concept.
+
+### 5. Narrative & shape
+
+Intent should be visible in the shape of the code — the structure itself is documentation.
+
+- Prefer guard clauses and early returns over deep nesting; flag arrowhead-shaped code. The happy path should be prominent, error handling at the edges.
+- Break up expression soup with named intermediates — the name *is* the documentation.
+- Analogous branches should be shaped analogously; asymmetry should signal a real difference, not accidental drift.
+- Within a module, prefer top-down ordering: public API first, helpers below, reading order ≈ call order.
+
+### 6. Comments
+
+Comments explain the *why*, never the *what* — the code already says what it does.
+
+- **Fewer is better.** Prefer no comment to one a better name would make redundant or that just restates the docstring; every comment can drift out of sync, so it has to change a reader's understanding to earn its place.
+- Flag comments that narrate the code (`# increment counter`), restate the obvious, or have drifted out of sync with the code.
+- Flag commented-out code — delete it; that's what version control is for.
+- Flag process/changelog comments embedded in source (`# previously we used a loop here`, `# fix for PR #123`, `# TODO (no owner, no context)`). Process belongs in commit messages, not the file.
+- Comments should be reflowed to the project's full line width — short broken-up lines waste vertical space.
+
+### 7. Docstrings
+
+A docstring is the source of truth for the *current* contract, read by someone who just cloned the repo and has never seen any prior version. This is the axis models most often get wrong, so weigh it heavily — and the most common failure is bloat, not inaccuracy.
+
+- **Brevity — earn every sentence.** State the contract and stop. If the name and signature already say it, one line beats a paragraph, and a well-named test or private helper often needs no docstring at all. Rationale for *why the implementation works this way* is not the contract — cut it (a one-line comment at most, usually the commit message). A docstring that reads like a mini-essay is a smell even when every sentence is accurate and active-voice.
+- **Brevity decides *whether* a docstring exists; once it earns its place, it is structured** — never freeform prose. Proper NumPy sections (`Parameters`, `Returns`, `Raises`, `Yields`, ...), one entry per item: a function returning a tuple gets a `Returns` section with one named entry per element, not a paragraph describing them. These two rules don't conflict — the cut is between "no docstring" and "a short structured one", never "a chatty paragraph".
+- **NumPy style, active voice**, with prose reflowed to the project's line width — don't leave docstrings hard-wrapped at 70 chars in a 120-char project. "Compute the gradient", not "The gradient is computed"; "Raise ValueError if X", not "ValueError will be raised".
+- **Contract, not commentary.** Flag anything that only makes sense as a note about recent work: explaining current behavior by contrasting with a previous version ("the earlier loop..."), references to audits/benchmarks/PRs/incidents, and "Notes"/"Discussion" sections or defensive "Note that..."/"Importantly..." prose that exists to justify a change rather than document the contract. Self-test each docstring: *would this still make sense to a fresh cloner who never saw an earlier implementation?* If not, cut the offending part.
+- **Parameters**: `name : human readable type` — `list of int`, not `list[int]`; describe genuinely nested types in prose rather than as a type-hint blob. Append `, optional` to optional args. Put the default value in the **last sentence** of the description, not on the type line.
+- **Math** goes in `.. math::` directives (raw strings `r"""..."""` so backslashes survive), never as ASCII pseudo-code or backticked expressions. Inline, use `:math:` roles for mathematical symbols (`:math:`\alpha``) and double-backticks for code identifiers the reader could grep for (``` ``alpha`` ```).
+- Use Sphinx roles for cross-references (`:func:`, `:class:`, `:mod:`).
+- No module-level docstrings — if a module's purpose isn't evident from its name and contents, the fix is a better name or a split, not a docstring.
+- When you need exact section ordering or syntax (formatting `Parameters` for optional args, `*args`, or multiple returns), consult `references/numpydoc-style-guide.rst` in this skill's directory — the canonical numpydoc spec — rather than working from memory.
+
+### 8. Modern idioms & types
+
+Code should use the language as it is today and match the project's typing conventions. The bullets below are Python-specific; for other languages, apply the same principle with that language's modern idioms and the project's lint config as the authority.
+
+- PEP 604 unions (`int | None`) and PEP 585 generics (`list[int]`) over `Optional`/`typing.List`. Flag `from __future__ import annotations` — it's unwanted on supported Python versions.
+- f-strings over `%`/`str.format`; context managers over manual open/close; `pathlib` over `os.path` string-mangling; `enumerate`/`zip` over index bookkeeping; comprehensions where they read more clearly than an accumulator loop (but not when they get so dense they obscure intent).
+- Public functions/methods carry type hints — the user treats them as documentation.
+- Imports belong at the top of the module. Function-local imports are a habitual model tic and are almost never warranted — flag them for hoisting. The rare exceptions (breaking a genuine circular dependency, guarding a heavy or optional dependency) are obvious from context; everything else moves up.
+- Respect what the surrounding module already does; don't import a foreign idiom into code that's internally consistent.
+
+### 9. Cruft & professionalism
+
+The diff should look like it was written by someone who cleaned up after themselves.
+
+- Flag leftover `print`/debug statements (use logging where the project does), dead/unreachable code, and unused imports or locals (these overlap with the linter — only call them out if the linter clearly isn't catching them).
+- Flag stray scratch/debug artifacts that shouldn't be committed; if a file genuinely shouldn't be tracked, the fix is a `.gitignore` entry, not deletion.
+- Every dependency is a liability — question a new one that the standard library or an existing dependency already covers.
 
 ## What to leave alone
-- Intentional style the project has clearly committed to, even if it's not your preference.
-- Behavior, including edge-case quirks, unless the user flagged them as bugs. This skill polishes; it doesn't fix logic.
-- Input-validation and other obviously-correct boilerplate — tightening it rarely pays for the churn.
 
-## Reporting
-After applying the pass, give a short summary grouped by kind of change (naming, structure, docstrings, formatting, performance), noting anything you deliberately left untouched and any cleanup you held back because it would touch behavior or the public API.
+- Anything ruff/black auto-fix. If running the formatter would resolve it, it's not your finding.
+- Consistent local idioms that merely differ from your taste — consistency is a feature.
+- Test quality and coverage — whether the assertions are the right ones, what isn't covered — route those to `improve-tests`. Test files that are in scope are still audited as code (naming, cruft, structure, the duplication rules above).
+- Speculative future-proofing (both suggesting it and demanding it).
 
-Be specific: name the symbol and cite `file:line`. "Renamed `proc_res` → `pricing_result` at pricer.py:88" tells the reader something; "improved naming and structure" does not. A summary that could describe a cleanup of any file means you're reporting the category, not the work you actually did.
+## Output
+
+Group findings by file. Within each file, sort into four tiers so the user can tell risk from obligation from opinion:
+
+1. **Bugs & correctness** — the behavior is wrong or fragile; fixing it *changes* behavior. State the concrete failure: what input or state triggers it, and what goes wrong. Mark each finding **confirmed** or **plausible** per the procedure. (Omitted in style-only mode.)
+2. **Structure** — behavior-preserving refactors: deduplication, splits, anti-pattern fixes, design cleanups. Correct by intent, but big enough that a reviewer would want a green test run behind them.
+3. **Violations** — breaks a convention the user has actually stated (global `CLAUDE.md`, project config). Name the rule it breaks.
+4. **Polish** — a zero-risk professional improvement where the stated conventions are silent. This is a judgment call and you should present it as one.
+
+Format each finding as:
+
+> `path:line` — *one-line description of the issue* — why it matters (the failure it causes, or the principle it violates) — the concrete fix.
+
+Show a tight before → after only when it makes the fix unambiguous; don't quote large blocks. For the worst offenders, show the better approach as concrete code — criticism without an alternative is half a finding. Be specific: cite the symbol and the line, never "improve naming throughout."
+
+Close with a two-line summary (how many findings per tier, the dominant theme).
+
+## Applying fixes
+
+Offer to apply, per tier — all of it, one tier, or a subset the user picks:
+
+- **Bugs** are never bulk-applied. Each is a separate proposal the user approves individually, since each changes behavior. When a bug fix is applied, promote its repro to a regression test in the project's test suite — a confirmed bug without a test is a bug waiting to come back.
+- **Structure** fixes are behavior-preserving by intent but not by construction — after applying any, run the project's test suite and compare against the baseline status from the procedure; report the result.
+- **Violations and Polish** are safe by construction; apply and move on. If while applying you find that a "style" fix would actually alter behavior, stop and reclassify it instead.
