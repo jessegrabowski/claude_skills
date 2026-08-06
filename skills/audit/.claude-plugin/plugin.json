@@ -1,0 +1,13 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "audit",
+  "version": "0.1.0",
+  "description": "Focused code-quality, security, and design analysis passes delegated to by the review entry points",
+  "author": {
+    "name": "jessegrabowski",
+    "email": "jessegrabowski@gmail.com"
+  },
+  "skills": [
+    "./"
+  ]
+}
