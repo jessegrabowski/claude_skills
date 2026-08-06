@@ -13,7 +13,7 @@ Entry points, invoked directly:
 - `code-review` -- honest review that reports findings without touching files
 - `improve-code` -- standards and professionalism pass, applied in place
 - `improve-tests` -- test quality and coverage audit
-- `planning-scaffold` -- scaffold a phased implementation plan under `planning/`
+- `plan-scaffold` -- scaffold a step/PR/commit implementation plan in the Obsidian vault
 - `split-and-commit` -- break working changes into logical commits
 - `issue` / `lazy-pr` -- file a GitHub issue or open a PR
 
