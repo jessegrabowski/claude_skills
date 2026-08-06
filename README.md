@@ -41,43 +41,47 @@ last), design (`solid-principles`, `design-pattern-implementation`,
 
 ## Install
 
-Clone, then symlink the entry-point skills into `~/.claude/skills/`:
+Clone anywhere and run `install.sh`. It locates the repo from its own path, so
+nothing needs editing and it does not care about your working directory:
 
 ```sh
-git clone git@github.com:jessegrabowski/claude_skills.git ~/Documents/Python/claude_skills
-
-REPO=~/Documents/Python/claude_skills
-mkdir -p ~/.claude/skills
-
-for name in code-review improve-code improve-tests plan-scaffold split-and-commit issue lazy-pr audit; do
-    src="$REPO/skills/$name"
-    dest=~/.claude/skills/"$name"
-    [ -d "$src" ] || { echo "not in repo, skipping: $name"; continue; }
-    if [ -e "$dest" ] && [ ! -L "$dest" ]; then
-        echo "already a real directory, skipping: $name"
-        continue
-    fi
-    ln -sfn "$src" "$dest" && echo "linked: $name"
-done
+git clone git@github.com:jessegrabowski/claude_skills.git
+./claude_skills/install.sh          # -n to see what it would do first
 ```
 
-Set `REPO` to wherever the clone actually landed — the symlinks encode that path,
-and `ln` will not warn you if it doesn't exist.
+Re-run it after any pull that renames or moves a skill. Restart Claude Code
+afterward to pick the changes up, then confirm with `claude plugin details audit`
+and `/help`.
 
-Per-skill symlinks rather than one on `~/.claude/skills` itself, so machine-local
-skills can live alongside the synced ones. Restart Claude Code afterward to pick
-them up.
+Four things the script is deliberately doing:
 
-Three things the loop is deliberately doing:
-
+- **The clone's location is discovered, not configured.** A symlink encodes an
+  absolute path, and `ln` will happily point one at a directory that does not exist.
+  Resolving the repo from `BASH_SOURCE` means the script works whatever the clone is
+  called and wherever it lives; `CLAUDE_CONFIG_DIR` is honored for the same reason.
+- **Stale links are swept first.** A symlink whose target moved does not error, it
+  just silently stops resolving, so a rename upstream leaves dead entries behind
+  until something removes them. The sweep drops any link in `skills/` that no longer
+  resolves -- including ones pointing at other repos, so use `-n` first if you link
+  skills from elsewhere.
+- **Per-skill links, not one link on `skills/` itself.** Machine-local skills that
+  should not be synced can then sit in the same directory. An existing *real*
+  directory is never touched: `ln -sfn` against one silently creates the link
+  *inside* it (`~/.claude/skills/improve-code/improve-code`) rather than replacing
+  it, so the script skips those and says so. To convert one, confirm the repo copy is
+  current, remove the real directory, and re-run. An existing *symlink* is replaced
+  normally, so re-running is always safe.
 - **Only the entry points get linked.** The delegated analysis skills are reached
   through those, not invoked directly, so linking all of them just crowds the skill
-  list with near-miss descriptions for the trigger matcher to sort through.
-- **An existing real directory is never touched.** `ln -sfn` against a real directory
-  silently creates the link *inside* it (`~/.claude/skills/improve-code/improve-code`)
-  rather than replacing it, so the loop skips those and tells you. To convert one,
-  confirm the repo copy is current, remove the real directory, and re-run. An existing
-  *symlink* is replaced normally, so re-running after a move is safe.
-- **The clone becomes live config.** Once linked, a `git checkout`, branch switch, or
-  rebase changes the skills in every running Claude Code session. That's the point —
-  edit either path and both see it — but it means the repo is no longer inert.
+  list with near-miss descriptions for the trigger matcher to sort through. `audit`
+  is in the list because it is a plugin: linked into `skills/`, Claude Code loads it
+  as `audit@skills-dir` and its 22 passes namespace under `/audit:<name>` instead of
+  registering top-level.
+
+Once linked, the clone *is* live config. A `git checkout`, branch switch, or rebase
+changes the skills in every running session. That is the point -- edit either path
+and both see it -- but it means the repo is no longer inert.
+
+There is deliberately no marketplace manifest here. A marketplace install would put
+a pinned copy in the plugin cache that updates on `claude plugin update` rather than
+on `git pull`, which is the opposite of what this repo is for.
