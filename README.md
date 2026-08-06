@@ -17,11 +17,18 @@ Entry points, invoked directly:
 - `split-and-commit` -- break working changes into logical commits
 - `issue` / `lazy-pr` -- file a GitHub issue or open a PR
 
-The remaining directories are focused analysis skills that the entry points
-above delegate to: security (`initial-security-analysis`, `input-validation`,
-`authentication-flow-review`, `secrets-management-audit`, ...), design
-(`solid-principles`, `design-pattern-implementation`, `code-duplication-detection`,
-...), and reliability (`error-handling-resilience`, `exception-flow-analysis`, ...).
+The 22 focused analysis passes those delegate to live under `skills/audit/`, which
+is a plugin rather than a plain skill, so they namespace instead of crowding the
+top-level slash list:
+
+- `/audit` -- routes to the right pass when you haven't named one
+- `/audit:input-validation`, `/audit:solid-principles`, `/audit:exception-flow-analysis`, ...
+
+They group into security (`initial-security-analysis` first, `comprehensive-security-report`
+last), design (`solid-principles`, `design-pattern-implementation`,
+`code-duplication-detection`, ...), reliability (`error-handling-resilience`,
+`resilience-fault-tolerance`, ...), and quality (`readability-and-naming`,
+`testing-implementation`, ...). `skills/audit/SKILL.md` is the full index.
 
 ## Install
 
@@ -33,7 +40,7 @@ git clone git@github.com:jessegrabowski/claude_skills.git ~/Documents/Python/cla
 REPO=~/Documents/Python/claude_skills
 mkdir -p ~/.claude/skills
 
-for name in code-review improve-code improve-tests plan-scaffold split-and-commit issue lazy-pr; do
+for name in code-review improve-code improve-tests plan-scaffold split-and-commit issue lazy-pr audit; do
     src="$REPO/skills/$name"
     dest=~/.claude/skills/"$name"
     [ -d "$src" ] || { echo "not in repo, skipping: $name"; continue; }
