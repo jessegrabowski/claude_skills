@@ -20,13 +20,13 @@ Before drafting anything, confirm that all three of these ran against the work i
 2. `improve-tests`
 3. `split-and-commit`
 
-Check the conversation history, not your memory of intent. Evidence that a pass ran means the skill was actually invoked and its changes landed — not that the code "looks fine" or that you were careful while writing it.
+Check the conversation history, not your memory of intent. Evidence that a pass ran means the skill was actually invoked and its changes landed -- not that the code "looks fine" or that you were careful while writing it.
 
 If any of the three is missing, say which ones and run them now, in that order, before continuing.
 
-**Run the missing audits with `--apply`** — `improve-code --apply`, `improve-tests --apply`. The gate exists to get the branch into shape, and a findings report the user has to adjudicate tier by tier stalls the PR they just asked for. `--apply` lands the behavior-preserving work directly and reports it afterward.
+**Run the missing audits with `--apply`** -- `improve-code --apply`, `improve-tests --apply`. The gate exists to get the branch into shape, and a findings report the user has to adjudicate tier by tier stalls the PR they just asked for. `--apply` lands the behavior-preserving work directly and reports it afterward.
 
-Both skills hold back their destructive tier even under `--apply`: `improve-code` still proposes each bug fix individually, and `improve-tests` still proposes each test deletion. Those come back to the user as questions. Answer them before drafting — a PR opened over an unresolved bug finding is worse than a slow one.
+Both skills hold back their destructive tier even under `--apply`: `improve-code` still proposes each bug fix individually, and `improve-tests` still proposes each test deletion. Those come back to the user as questions. Answer them before drafting -- a PR opened over an unresolved bug finding is worse than a slow one.
 
 `improve-code` and `improve-tests` produce edits, so they must precede `split-and-commit`; if either one lands changes after commits were made, `split-and-commit` runs again for the new work. Do not open a PR with an uncommitted working tree.
 
@@ -34,15 +34,15 @@ If the user explicitly tells you to skip a pass, say once that you're skipping i
 
 ## The format
 
-**Title** — under 72 chars, imperative, specific. Names the change, not the activity: `Cache curve bootstrap results per settlement date`, not `Improvements to bootstrapping` or `feat: various fixes`. If the repo's PR history uses a prefix convention (`[area]`, `feat:`), match it.
+**Title** -- under 72 chars, imperative, specific. Names the change, not the activity: `Cache curve bootstrap results per settlement date`, not `Improvements to bootstrapping` or `feat: various fixes`. If the repo's PR history uses a prefix convention (`[area]`, `feat:`), match it.
 
-**Body** — one paragraph. Two or three sentences, one is often enough. What changed, and the why that isn't obvious from the diff. Then, only if they apply:
+**Body** -- one paragraph. Two or three sentences, one is often enough. What changed, and the why that isn't obvious from the diff. Then, only if they apply:
 
 - a `Closes #123` / `Fixes #123` line, when there's an issue
 - a short code block, when a call site or API shape is the clearest way to show the change
-- one line on how it was verified, when verification was non-obvious (new test file names don't need saying — they're in the diff)
+- one line on how it was verified, when verification was non-obvious (new test file names don't need saying -- they're in the diff)
 
-That's the whole body. No section headings. No file-by-file walkthrough. No bulleted list restating each commit — the commit log already exists and is one click away. No "this PR..." preamble; start with the substance.
+That's the whole body. No section headings. No file-by-file walkthrough. No bulleted list restating each commit -- the commit log already exists and is one click away. No "this PR..." preamble; start with the substance.
 
 **Example body:**
 
@@ -64,7 +64,7 @@ Skip the technical-report register. If a phrase would sound stilted said out lou
 
 ## What to leave out
 
-One test, applied to every clause: **could the reviewer get this from the diff?** If yes, cut it. The body exists to tell them why to look and what to watch for — nothing else.
+One test, applied to every clause: **could the reviewer get this from the diff?** If yes, cut it. The body exists to tell them why to look and what to watch for -- nothing else.
 
 That test does most of the work, but it's easy to pass in spirit and fail in practice, because detail you just spent an hour on feels load-bearing when it isn't. Two habits to watch for:
 
@@ -75,7 +75,7 @@ Verification is assumed. Mention it only when it's surprising.
 
 **A body that fails the test:**
 
-> The `retry_policy` argument was being dropped because `_build_config` shallow-copies the options dict at line 88 before the decorator merges defaults, so any key set by the caller after import time was silently discarded. This affected `retry_policy`, `timeout_s`, and `backoff_factor`. Changed the shallow copy to a deep merge, which is behavior-preserving for every other key — a targeted fix to just `retry_policy` was possible but would leave the same bug latent for the other two, so the broader fix was taken.
+> The `retry_policy` argument was being dropped because `_build_config` shallow-copies the options dict at line 88 before the decorator merges defaults, so any key set by the caller after import time was silently discarded. This affected `retry_policy`, `timeout_s`, and `backoff_factor`. Changed the shallow copy to a deep merge, which is behavior-preserving for every other key -- a targeted fix to just `retry_policy` was possible but would leave the same bug latent for the other two, so the broader fix was taken.
 
 **The same PR:**
 
@@ -83,7 +83,7 @@ Verification is assumed. Mention it only when it's surprising.
 
 ## Commits
 
-Commit messages follow `split-and-commit`: imperative mood, one line, ≤ 79 chars, matching repo conventions. **No Claude attribution anywhere** — no `Co-Authored-By: Claude…`, no `🤖 Generated with…`, in commits or in the PR body. If a commit already carries attribution from an earlier turn and hasn't been pushed, offer to rewrite it; don't rewrite published history on your own.
+Commit messages follow `split-and-commit`: imperative mood, one line, <= 79 chars, matching repo conventions. **No Claude attribution anywhere** -- no `Co-Authored-By: Claude...`, no `🤖 Generated with...`, in commits or in the PR body. If a commit already carries attribution from an earlier turn and hasn't been pushed, offer to rewrite it; don't rewrite published history on your own.
 
 ## Branch and push
 
@@ -93,14 +93,14 @@ Commit messages follow `split-and-commit`: imperative mood, one line, ≤ 79 cha
 
 ## Submit
 
-**Always show the full draft and get explicit authorization before pushing or running `gh pr create`.** A PR notifies reviewers and kicks off CI the moment it opens; a wrong base branch or a half-baked title is out there immediately. The user makes the call, every time. "Open a PR" is the request to *draft* one — it is not standing permission to publish. This holds even when you're confident the draft is perfect.
+**Always show the full draft and get explicit authorization before pushing or running `gh pr create`.** A PR notifies reviewers and kicks off CI the moment it opens; a wrong base branch or a half-baked title is out there immediately. The user makes the call, every time. "Open a PR" is the request to *draft* one -- it is not standing permission to publish. This holds even when you're confident the draft is perfect.
 
 The flow:
 
 1. Confirm the gate above is satisfied and the working tree is clean.
 2. Check the base branch (`gh repo view --json defaultBranchRef`) and the commits that will ship (`git log <base>..HEAD --oneline`).
 3. Show the user the complete draft exactly as it will appear: title, base branch, commit list, and the rendered body. Ask whether to open it, or whether they want changes.
-4. Wait for an explicit go-ahead ("open it", "yes", "ship it", or similar). Silence, a question, or a tweak means don't publish yet — revise and show the draft again.
+4. Wait for an explicit go-ahead ("open it", "yes", "ship it", or similar). Silence, a question, or a tweak means don't publish yet -- revise and show the draft again.
 5. Only then push, and run:
 
    ```

@@ -22,7 +22,7 @@ Supplementary correctness axis, applied only when the code under review does arr
 
 ## NaN / inf propagation
 
-- Silent NaN propagation: code that can produce NaN and carries on; decide whether the contract is propagate, raise, or mask — and make it explicit.
+- Silent NaN propagation: code that can produce NaN and carries on; decide whether the contract is propagate, raise, or mask -- and make it explicit.
 - Reductions that hide NaNs (`nansum` et al.) used as a fix rather than a documented policy.
 
 ## Autodiff
@@ -38,10 +38,10 @@ Supplementary correctness axis, applied only when the code under review does arr
 
 ## Performance idioms
 
-- Python loops over array elements where a vectorized/einsum form exists — but only flag when the loop is on a hot path; a clear loop over 10 items beats an opaque einsum.
+- Python loops over array elements where a vectorized/einsum form exists -- but only flag when the loop is on a hot path; a clear loop over 10 items beats an opaque einsum.
 - Repeated factorizations or recomputed invariants inside iterative algorithms (re-solving with the same matrix, re-validating the same inputs each step).
 
 ## Contracts
 
-- Tolerances, iteration caps, and convergence criteria as unexplained magic numbers — name them and put defaults in the docstring per the standard parameter rules.
+- Tolerances, iteration caps, and convergence criteria as unexplained magic numbers -- name them and put defaults in the docstring per the standard parameter rules.
 - Units and scales: interfaces that mix units (log vs natural scale, radians vs degrees, rates vs probabilities) without the name or docstring saying which.

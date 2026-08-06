@@ -24,7 +24,7 @@ Check for:
 1. Broken Object Level Authorization (BOLA / IDOR)
 
    * Verify ownership/tenant checks on all object-level routes (`GET/PUT/DELETE /:id`).
-   * Ensure identifiers in URL, body, or query cannot be manipulated to access others’ data.
+   * Ensure identifiers in URL, body, or query cannot be manipulated to access others' data.
 
 2. Broken Function Level Authorization
 
@@ -33,12 +33,12 @@ Check for:
 
 3. Missing authorization checks on sensitive endpoints
 
-   * Validate middleware ordering (authN → authZ → handler).
+   * Validate middleware ordering (authN -> authZ -> handler).
    * Confirm no endpoints are left exposed (admin tools, bulk exports, feature-flagged routes).
 
 4. Role-based access control (RBAC) implementation
 
-   * Map roles → permissions explicitly; enforce deny-by-default.
+   * Map roles -> permissions explicitly; enforce deny-by-default.
    * Ensure roles cannot be set/changed by the client.
 
 5. Privilege escalation possibilities
@@ -118,9 +118,9 @@ Exploitability notes and, where safe, a minimal PoC or reproduction steps (no re
 
 Remediation: precise code-level fix or config change (snippets welcome), plus defense-in-depth guidance.
 
-A summary risk score (0–10) and top 3–5 prioritized fixes that reduce risk fastest.
+A summary risk score (0-10) and top 3-5 prioritized fixes that reduce risk fastest.
 
-A checklist diff: which items from the “Check for” list are Pass/Fail/Not Applicable.
+A checklist diff: which items from the "Check for" list are Pass/Fail/Not Applicable.
 
 ## Constraints & style:
 
@@ -128,6 +128,6 @@ Be concrete and cite exact code locations and identifiers.
 
 Prefer minimal, drop-in fix snippets over prose.
 
-Do not invent files or functions that aren’t present; if context is missing, mark as Unable to verify and say what code would prove it.
+Do not invent files or functions that aren't present; if context is missing, mark as Unable to verify and say what code would prove it.
 
 Write this into a markdown file and place it in the audits/ folder.
