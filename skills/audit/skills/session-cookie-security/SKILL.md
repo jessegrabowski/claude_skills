@@ -4,7 +4,7 @@ description: Analyzes session and cookie security, including flags, expiration, 
 license: CC0-1.0
 metadata:
   category: security
-allowed-tools: Read Grep Glob Write
+allowed-tools: Read, Grep, Glob, Write
 disable-model-invocation: true
 argument-hint: "[path or scope]"
 ---
