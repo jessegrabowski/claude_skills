@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
-# Link the entry-point skills in this repo into the Claude Code skills directory.
-# Safe to re-run: existing symlinks are replaced, real directories are left alone.
-# See README.md for what each step is doing and why.
+# Link this repo's entry-point skills and config files into the Claude Code
+# config directory. Safe to re-run: existing symlinks are replaced, real files
+# and directories are left alone. See README.md for what each step does and why.
 
 set -euo pipefail
 
@@ -17,16 +17,23 @@ ENTRY_POINTS=(
     audit
 )
 
+# Linked from config/ to the root of the Claude config directory.
+CONFIG_FILES=(
+    CLAUDE.md
+)
+
 REPO=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
-SKILLS="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills"
+CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+SKILLS="$CLAUDE_DIR/skills"
 DRY_RUN=false
 
 usage() {
     cat <<EOF
 usage: install.sh [-n|--dry-run] [-h|--help]
 
-Links the following into \$CLAUDE_CONFIG_DIR/skills (default ~/.claude/skills):
-  ${ENTRY_POINTS[*]}
+Links into \$CLAUDE_CONFIG_DIR (default ~/.claude):
+  skills/   ${ENTRY_POINTS[*]}
+  files     ${CONFIG_FILES[*]}
 
   -n, --dry-run   report what would change without touching anything
 EOF
@@ -49,7 +56,7 @@ run() {
 }
 
 echo "repo:   $REPO"
-echo "skills: $SKILLS"
+echo "config: $CLAUDE_DIR"
 if [ "$DRY_RUN" = true ]; then
     echo "(dry run, nothing will be written)"
 fi
@@ -84,6 +91,29 @@ for name in "${ENTRY_POINTS[@]}"; do
 
     if [ -e "$dest" ] && [ ! -L "$dest" ]; then
         echo "real directory, skipping: $name"
+        skipped=$((skipped + 1))
+        continue
+    fi
+
+    run ln -sfn -- "$src" "$dest"
+    echo "linked: $name"
+    linked=$((linked + 1))
+done
+
+for name in "${CONFIG_FILES[@]}"; do
+    src="$REPO/config/$name"
+    dest="$CLAUDE_DIR/$name"
+
+    if [ ! -f "$src" ]; then
+        echo "not in repo, skipping: $name"
+        skipped=$((skipped + 1))
+        continue
+    fi
+
+    # A real file here is the user's own config, and clobbering it would lose
+    # content that exists nowhere else. Converting is a deliberate manual step.
+    if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+        echo "real file, skipping: $name (move it into $REPO/config/ to sync it)"
         skipped=$((skipped + 1))
         continue
     fi
