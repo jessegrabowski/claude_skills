@@ -39,6 +39,28 @@ last), design (`solid-principles`, `design-pattern-implementation`,
 `resilience-fault-tolerance`, ...), and quality (`readability-and-naming`,
 `testing-implementation`, ...). `skills/audit/SKILL.md` is the full index.
 
+`config/` holds files that link to the root of the Claude config directory rather
+than into `skills/`. Currently that is `CLAUDE.md`, the global preferences every
+session loads. It sits in `config/` rather than at the repo root because a root
+`CLAUDE.md` would *also* load as project instructions whenever you work in this
+repo, applying the same rules twice from two sources.
+
+Only portable content is synced -- language, response style, code style, testing.
+Anything true of one machine but not the others (production data paths, internal
+dataset names, locally installed tooling) stays out of the repo in
+`~/.claude/CLAUDE.local.md`, which the synced file pulls in with a trailing import:
+
+```
+@~/.claude/CLAUDE.local.md
+```
+
+A missing import target is silently ignored, so the same synced file works unchanged
+on a machine with no local additions -- nothing to comment out, no error at startup.
+
+The import is doing real work and is not decorative: a `CLAUDE.local.md` sitting in
+the Claude config directory is **not** picked up on its own. That name auto-loads at
+the project level only, so without the `@` line the file is simply never read.
+
 ## Install
 
 Clone anywhere and run `install.sh`. It locates the repo from its own path, so
