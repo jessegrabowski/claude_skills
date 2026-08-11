@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # lazy-pr
 
-Open a pull request a reviewer will actually read. Same philosophy as `issue`: **less is more**. One or two sentences on what changed and why, and then get out of the way. The diff is the content; the description is a pointer to it. Headings, bullet inventories, "Summary / Changes / Testing / Impact" scaffolding, emoji section markers, and bolded key-phrases read as machine filler and make the author look like they didn't read their own diff. Strip, don't pad.
+Open a pull request a reviewer will actually read. Same philosophy as `lazy-issue`: **less is more**. One or two sentences on what changed and why, and then get out of the way. The diff is the content; the description is a pointer to it. Headings, bullet inventories, "Summary / Changes / Testing / Impact" scaffolding, emoji section markers, and bolded key-phrases read as machine filler and make the author look like they didn't read their own diff. Strip, don't pad.
 
 ## Input
 

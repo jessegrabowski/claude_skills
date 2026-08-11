@@ -18,7 +18,7 @@ Entry points, invoked directly:
   Improve and Add, deletions stay opt-in
 - `plan-scaffold` -- scaffold a step/PR/commit implementation plan in the Obsidian vault
 - `split-and-commit` -- break working changes into logical commits
-- `issue` / `lazy-pr` -- file a GitHub issue or open a PR
+- `lazy-issue` / `lazy-pr` -- file a GitHub issue or open a PR
 
 Alongside those, 22 narrower single-axis passes live under `skills/audit/`, which is
 a plugin rather than a plain skill, so they namespace instead of crowding the

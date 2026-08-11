@@ -12,7 +12,7 @@ ENTRY_POINTS=(
     improve-tests
     plan-scaffold
     split-and-commit
-    issue
+    lazy-issue
     lazy-pr
     audit
 )

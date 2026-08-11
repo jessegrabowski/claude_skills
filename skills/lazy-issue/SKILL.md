@@ -1,10 +1,10 @@
 ---
-name: issue
+name: lazy-issue
 description: Files a lean, high-signal GitHub issue from a brief bug report or feature request. Use whenever the user mentions a bug, issue, ticket, feature request, or wants to file/report/open something -- even if they don't say "issue" explicitly.
 disable-model-invocation: true
 ---
 
-# issue
+# lazy-issue
 
 File a GitHub issue a busy maintainer will actually read. The whole philosophy is **less is more**: a one-sentence problem statement plus a repro they can paste beats three screens of prose. Long, sectioned, heading-heavy issues read as LLM filler and get skimmed past -- the effort actively works against you. Your job here is to strip, not to pad.
 
