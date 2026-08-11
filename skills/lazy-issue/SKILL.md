@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # lazy-issue
 
-File a GitHub issue a busy maintainer will actually read. The whole philosophy is **less is more**: a one-sentence problem statement plus a repro they can paste beats three screens of prose. Long, sectioned, heading-heavy issues read as LLM filler and get skimmed past -- the effort actively works against you. Your job here is to strip, not to pad.
+File a GitHub issue a busy maintainer will actually read. Same philosophy as `lazy-pr`: **less is more**. A one-sentence problem statement plus a repro they can paste beats three screens of prose. Long, sectioned, heading-heavy issues read as LLM filler and get skimmed past -- the effort actively works against you. Your job here is to strip, not to pad.
 
 ## Input
 
@@ -24,7 +24,7 @@ A good issue is three things and nothing else:
 2. **One sentence** -- what breaks and why, in a single tweet-length sentence. If you reach for a second sentence, it's usually restating the first; cut it.
 3. **A code block** -- for a bug, a complete, runnable MWE. Put the workaround, if there is one, as a trailing comment in the code rather than as prose.
 
-That is the entire body. No `Description`, `Analysis`, `Severity`, `Steps to Reproduce`, `Expected vs Actual`, or `What needs to be done` headings. No permalinks. If a fact doesn't fit in the sentence and isn't visible in the MWE, it's probably not worth saying.
+That is the entire body. No `Description`, `Analysis`, `Severity`, `Steps to Reproduce`, `Expected vs Actual`, or `What needs to be done` headings. No emoji section markers, no bolded key-phrases. No permalinks. If a fact doesn't fit in the sentence and isn't visible in the MWE, it's probably not worth saying.
 
 **Example body:**
 
@@ -56,6 +56,38 @@ If a bug genuinely can't be reduced to a runnable script (flaky, visual, environ
 ## Features, not bugs
 
 Same discipline: one sentence on what you want and why it's worth doing, and -- only if it clarifies -- a short code block showing the desired API or call site as you'd want it to read. No MWE to run, no roadmap, no deliverables list.
+
+## Voice
+
+Write like you're telling a colleague what's broken, in a hurry, from your phone. Contractions are fine. Sentence fragments are fine. Naming the thing plainly and stopping is the goal.
+
+**American English. Always.** British spellings in an issue body are an instant tell.
+
+Skip the technical-report register. If a phrase would sound stilted said out loud, it's wrong here. No hedging a diagnosis you're confident in, no apologizing for filing, no announcing what the issue is about before saying it ("this issue reports...").
+
+## What to leave out
+
+One test, applied to every clause: **could the maintainer get this from the title and the MWE?** If yes, cut it. The body exists to tell them why to look and what to watch for -- nothing else.
+
+That test does most of the work, but it's easy to pass in spirit and fail in practice, because detail you just spent an hour on feels load-bearing when it isn't. Two habits to watch for:
+
+- **Precision the prose doesn't need.** Exact line numbers, full symbol paths, enumerated call chains, version matrices. If a category-level phrase covers it, use the category and let the MWE supply the specifics. Name a version only when the bug is version-dependent.
+- **The story of the debugging.** How you found the cause, what you ruled out, what you tried first, what the fix would probably be. This is the most tempting material and the least useful; it belongs in chat, or in the PR that fixes it.
+
+**A body that fails the test:**
+
+> While tracing this I found that `_build_config` at `src/rx/config/loader.py:88` shallow-copies the options dict before the decorator merges defaults, so any key set by the caller after import time is silently discarded. I checked and this affects `retry_policy`, `timeout_s`, and `backoff_factor` on both 0.14.2 and 0.15.0. A deep merge would fix it, though a targeted fix to just `retry_policy` is also possible -- happy to open a PR either way.
+
+**The same issue:**
+
+> Caller-set options are silently dropped when they land after the defaults merge, so `retry_policy` never takes effect.
+>
+> ```python
+> from rx.config import build_client
+>
+> client = build_client(retry_policy="exponential")
+> print(client.retry_policy)  # "none"
+> ```
 
 ## Explore only as far as the sentence needs
 
