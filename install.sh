@@ -10,6 +10,7 @@ ENTRY_POINTS=(
     code-review
     improve-code
     improve-tests
+    improve-notebook
     plan-scaffold
     split-and-commit
     lazy-issue

@@ -16,6 +16,9 @@ Entry points, invoked directly:
   behavior-preserving tiers, bugs stay opt-in
 - `improve-tests` -- test quality and coverage as Remove/Improve/Add; `--apply` lands
   Improve and Add, deletions stay opt-in
+- `improve-notebook` -- notebook reproducibility, cell granularity, figures, and prose;
+  stacks `improve-code --apply` over the cell contents, always applies, and reports the
+  joint pass; only re-run-the-world fixes stay proposals
 - `plan-scaffold` -- scaffold a step/PR/commit implementation plan in the Obsidian vault
 - `split-and-commit` -- break working changes into logical commits
 - `lazy-issue` / `lazy-pr` -- file a GitHub issue or open a PR
