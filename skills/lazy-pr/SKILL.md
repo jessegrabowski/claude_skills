@@ -36,7 +36,7 @@ If the user explicitly tells you to skip a pass, say once that you're skipping i
 
 **Title** -- under 72 chars, imperative, specific. Names the change, not the activity: `Cache curve bootstrap results per settlement date`, not `Improvements to bootstrapping` or `feat: various fixes`. If the repo's PR history uses a prefix convention (`[area]`, `feat:`), match it.
 
-**Body** -- one paragraph. Two or three sentences, one is often enough. What changed, and the why that isn't obvious from the diff. Then, only if they apply:
+**Body** -- usually one paragraph of two or three sentences; one is often enough. A second short paragraph is fine when the change needs orienting before the specifics land, but that is the ceiling rather than the target. What changed, and the why that isn't obvious from the diff. Then, only if they apply:
 
 - a `Closes #123` / `Fixes #123` line, when there's an issue
 - a short code block, when a call site or API shape is the clearest way to show the change
@@ -73,7 +73,22 @@ That test does most of the work, but it's easy to pass in spirit and fail in pra
 - **Precision the prose doesn't need.** Exact versions, full symbol paths, enumerated renames, file counts. If a category-level phrase covers it, use the category and let the diff supply the specifics.
 - **The story of the work.** How you found the cause, what the underlying mechanism turned out to be, what you tried first, what you decided against and why. This is the most tempting material and the least useful; it belongs in chat, or in a follow-up issue if something is genuinely left undone.
 
-Verification is assumed. Mention it only when it's surprising.
+**The test bounds detail, not comprehension.** It licenses cutting specifics the diff already supplies -- never the sentence that makes the rest of the body legible. A reviewer reads the description *before* the diff, cold, often without the domain loaded; if the body only parses once you already know what the change does, it has failed at the one job it has. Cutting past that point is not concision, it is a body that says nothing to the only person who reads it.
+
+Two symptoms, both of which look like tightness and read like a riddle:
+
+- **Opening on a proper noun the reader has to go look up.** A card, a class, a config key, a customer -- named in the first clause as though it were shared context. Say what kind of thing it is and what went wrong with it, then name it.
+- **Stacking the whole change into subordinate clauses.** Three ideas per sentence, joined by em-dashes, each one load-bearing. Split them. Short declarative sentences are not less sophisticated; they are the ones that survive being read in a hurry.
+
+The fix is almost always one orienting sentence at the front, in plain terms, before anything specific.
+
+**A body cut past the point of sense:**
+
+> `spread_to_price` was collecting on stub periods too -- which the day-count convention treats as accrual, not a payment.
+
+**The same PR, readable cold:**
+
+> Nothing distinguished a real coupon from an accrual stub, so `spread_to_price` counted both as payments. Under the day-count convention a stub accrues rather than pays, so callable bonds with a short first period priced high.
 
 **A body that fails the test:**
 
@@ -82,6 +97,8 @@ Verification is assumed. Mention it only when it's surprising.
 **The same PR:**
 
 > Caller-set options were silently dropped when they landed after the defaults merge. `_build_config` now deep-merges instead of shallow-copying.
+
+Verification is assumed. Mention it only when it's surprising.
 
 ## Commits
 
