@@ -20,6 +20,8 @@ Entry points, invoked directly:
   stacks `improve-code --apply` over the cell contents, always applies, and reports the
   joint pass; only re-run-the-world fixes stay proposals
 - `plan-scaffold` -- scaffold a step/PR/commit implementation plan in the Obsidian vault
+- `ipm-prep` -- assemble the iteration-planning brief from two weeks of GitHub activity into
+  a vault note folder that exports as one PDF
 - `split-and-commit` -- break working changes into logical commits
 - `lazy-issue` / `lazy-pr` -- file a GitHub issue or open a PR
 

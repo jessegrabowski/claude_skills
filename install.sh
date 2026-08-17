@@ -12,6 +12,7 @@ ENTRY_POINTS=(
     improve-tests
     improve-notebook
     plan-scaffold
+    ipm-prep
     split-and-commit
     lazy-issue
     lazy-pr
