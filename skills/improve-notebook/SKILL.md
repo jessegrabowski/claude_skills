@@ -99,11 +99,18 @@ Results are figures. This is where a notebook is either beautiful or embarrassin
 **Read `references/figures.md` in this skill's directory before writing or restyling any figure.** It carries the house conventions -- chrome, palettes, legend placement, subplot grids, the two-level date axis, and display mechanics -- as concrete code. Do not work from memory, and do not invent a style when the project already has a plotting module.
 
 - **Replace raw output where a figure belongs**: printed `summary()` dicts, bare DataFrame and DataArray reprs, columns of numbers standing in for a result the reader is supposed to *see*. A table is fine when the reader needs exact values; it is not fine as the default presentation of a result.
+- **A trailing `print` block is not how a professional notebook reports a result.** A cell that ends in three or four `print(f"...")` lines dumping labelled numbers is the single most common tell of a working notebook that was never finished. There is a strict order of preference, and the fix is almost always to move up it, not to reword the print:
+  - *A figure*, when the result is a shape, a comparison, a trend, or an uncertainty. Most printed number blocks are figures that were never drawn.
+  - *A DataFrame, displayed*, when the reader needs exact values. Build the frame and leave it as the cell's last expression so the frontend renders it as an HTML table. Never `print(df)` or `print(df.to_string())` -- that throws away the rendering and gives back fixed-width ASCII. One frame with named rows beats six `print` lines carrying the same numbers.
+  - *A single `print`*, only for a genuinely scalar fact that has no table around it -- a count of divergences, a shape, which branch ran.
+- **Never hand-align columns inside a format string.** Padding a label with literal spaces (`f"frontier growth    {x:.2f}"`) breaks the moment a label is edited, and it encodes a column width nothing enforces. Use f-string alignment so the width is declared: `f"{label:<28}{value:>8.2f}"`. If more than about three lines need to line up with each other, that is a table and belongs in a DataFrame.
+- Cut interpretive commentary out of `print` calls entirely. A multi-line `print` explaining what the reader should conclude is a markdown cell at best and slop at worst; the density rules in the prose section apply to generated output too.
 - Figures are production quality from the start, not "good enough for a notebook" -- these get screenshotted into notes and reports.
 - Factor a figure repeated across cells into the shared helper module rather than leaving four copies of the same axis bookkeeping.
 - Fix the double display, the missing save, and any save path pointing at a scratch or temp directory.
 - Silence progress bars, verbose logging, and library chatter in cells whose output is meant to be read.
 - Replace statistics computed by hand where the domain library already provides them -- arviz first for posterior and predictive quantities, then xarray reductions.
+- **The same goes for plots, and it is missed more often.** Before drawing a distribution, a diagnostic, or a posterior by hand from `pdf`/`ppf`/quantile arrays, check whether the library that owns the object already draws it: preliz distributions have `plot_pdf`, arviz has the posterior and predictive plots, statsmodels and the state-space libraries have their own. A hand-rolled version is more code, drifts from the library's conventions, and usually omits the annotation the built-in gives free. Check the surrounding project for an established call pattern and match it.
 
 ### 4. Prose and polish
 
