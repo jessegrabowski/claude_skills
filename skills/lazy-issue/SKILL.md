@@ -65,6 +65,8 @@ Write like you're telling a colleague what's broken, in a hurry, from your phone
 
 Skip the technical-report register. If a phrase would sound stilted said out loud, it's wrong here. No hedging a diagnosis you're confident in, no apologizing for filing, no announcing what the issue is about before saying it ("this issue reports...").
 
+Casual register is not permission to be cute. Never soften a real technical consequence with diminishing or jokey framing -- "one wrinkle", "small gotcha", "fun catch", "worth noting though". A caveat that changes behavior, breaks an invariant, or needs a maintainer's decision is stated flatly as what it is: name the thing that breaks and what it forces. If it's important enough to include, it's important enough to say straight.
+
 ## What to leave out
 
 One test, applied to every clause: **could the maintainer get this from the title and the MWE?** If yes, cut it. The body exists to tell them why to look and what to watch for -- nothing else.

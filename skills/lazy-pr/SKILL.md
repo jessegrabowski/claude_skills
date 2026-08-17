@@ -62,6 +62,8 @@ Write like you're telling a colleague what you did, in a hurry, from your phone.
 
 Skip the technical-report register. If a phrase would sound stilted said out loud, it's wrong here. No hedging a decision you already made, no defending one nobody questioned, no announcing what the change does before doing it ("this PR introduces...").
 
+Casual register is not permission to be cute. Never soften a real technical consequence with diminishing or jokey framing -- "one wrinkle", "small gotcha", "fun catch", "worth noting though". And never signpost a hazard instead of stating it -- "worth a close look", "the interesting bit", "keep an eye on", "one thing to watch", "heads up". That phrasing promises significance and makes the reviewer go find it; name the hazard directly, so they read the consequence before they read the diff. A caveat that changes behavior, breaks an invariant, or needs the reviewer's decision is stated flatly as what it is. If it's important enough to include, it's important enough to say straight.
+
 ## What to leave out
 
 One test, applied to every clause: **could the reviewer get this from the diff?** If yes, cut it. The body exists to tell them why to look and what to watch for -- nothing else.
