@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # lazy-issue
 
-File a GitHub issue a busy maintainer will actually read. Same philosophy as `lazy-pr`: **less is more**. A one-sentence problem statement plus a repro they can paste beats three screens of prose. Long, sectioned, heading-heavy issues read as LLM filler and get skimmed past -- the effort actively works against you. Your job here is to strip, not to pad.
+File a GitHub issue a busy maintainer will actually read. Same philosophy as `lazy-pr`: less is more. A one-sentence problem statement plus a repro they can paste beats three screens of prose. Long, sectioned, heading-heavy issues read as LLM filler and get skimmed past -- the effort actively works against you. Your job here is to strip, not to pad.
 
 ## Input
 
@@ -16,17 +16,23 @@ $ARGUMENTS
 
 !`gh label list --json name,description --limit 100`
 
+## First, how many problems is this?
+
+An issue is closed when its problem is fixed, so two problems in one issue can never be closed cleanly -- the maintainer fixes one and the thread lives on with a half-done second thing buried in it. If you are about to describe a second symptom with a different cause, that is a second issue. Draft both and say so; let the user decide whether to file one or two.
+
+A second symptom the *same* cause produces is the opposite case. That stays in the one issue and usually in the one sentence, because it is evidence about a single problem rather than a second problem.
+
+This is where an issue and a PR part company. In `lazy-pr` a genuinely separate change earns a second paragraph in the same description. Here it earns its own issue, because the unit being closed is the problem, not the work.
+
 ## The format
 
-A good issue is three things and nothing else:
+A good issue is three things and nothing else. A title under 80 chars that names the symptom and, if it fits, the cause -- `pm.sample segfaults on Apple Silicon: fork default + Accelerate BLAS`, not `Bug in sampling`. One tweet-length sentence saying what breaks and why. And a code block: for a bug, a complete runnable MWE, with the workaround as a trailing comment in the code rather than as prose.
 
-1. **Title** -- under 80 chars, specific. Name the symptom and, if it fits, the cause: `pm.sample segfaults on Apple Silicon: fork default + Accelerate BLAS`, not `Bug in sampling`.
-2. **One sentence** -- what breaks and why, in a single tweet-length sentence. If you reach for a second sentence, it's usually restating the first; cut it.
-3. **A code block** -- for a bug, a complete, runnable MWE. Put the workaround, if there is one, as a trailing comment in the code rather than as prose.
+That is the entire body, with one addition that earns its way in: a number you actually measured. A timing, a wrong value next to the right one, a rate. Those are the one thing a maintainer can neither derive from the MWE nor take on trust, and an issue that has them should keep them even when that makes it the longest one you file. No `Description`, `Analysis`, `Severity`, `Steps to Reproduce`, `Expected vs Actual`, or `What needs to be done` headings. No emoji section markers, no bolded key-phrases. If a fact doesn't fit in the sentence and isn't visible in the MWE, it's probably not worth saying.
 
-That is the entire body. No `Description`, `Analysis`, `Severity`, `Steps to Reproduce`, `Expected vs Actual`, or `What needs to be done` headings. No emoji section markers, no bolded key-phrases. No permalinks. If a fact doesn't fit in the sentence and isn't visible in the MWE, it's probably not worth saying.
+Don't gather permalinks to decorate a diagnosis -- the maintainer can find the code. The exception is when the exact lines *are* the request: a one-line annotation fix or a constant that's wrong is clearest as a link straight to it, and then the link replaces the explanation rather than padding it.
 
-**Example body:**
+Example body:
 
 > On Apple Silicon `pm.sample` defaults to `mp_ctx="fork"`, but conda's numpy now links Apple Accelerate whose worker threads don't survive `fork()`, so any model large enough to hit Accelerate's threaded BLAS path segfaults every chain worker.
 >
@@ -51,17 +57,34 @@ Laziness belongs in the prose, not the evidence. Before posting a bug, write the
 
 If the failure is a clean Python traceback and it's long, tuck it under a collapsed `<details><summary>traceback</summary>` block beneath the code. For a segfault, hang, or wrong-number bug, skip that -- say so in the sentence and let the MWE speak.
 
-If a bug genuinely can't be reduced to a runnable script (flaky, visual, environment-specific), don't fake one: give the one sentence plus the shortest concrete steps to see it, and note that it isn't reliably reproducible. Still no headings.
+If a bug genuinely can't be reduced to a runnable script (flaky, visual, environment-specific), don't fake one: give the one sentence plus the shortest concrete steps to see it, and note that it isn't reliably reproducible. Still no headings. That issue is shorter than a normal one, not longer -- the absence of a repro is not a reason to compensate with prose.
+
+Example, no repro available:
+
+> The Windows CI job for `test_parallel_paths_match_serial_per_path` fails about one run in four with a worker timeout. Passes locally on Windows every time, never failed on Linux or macOS. No reliable repro; rerunning the job is the only way I've found to see it.
 
 ## Features, not bugs
 
-Same discipline: one sentence on what you want and why it's worth doing, and -- only if it clarifies -- a short code block showing the desired API or call site as you'd want it to read. No MWE to run, no roadmap, no deliverables list.
+Same discipline: one sentence on what you want and why it's worth doing, and -- only if it clarifies -- a short code block showing the desired API or call site as you'd want it to read. No MWE to run, no roadmap, no deliverables list. There is no repro to earn effort here, so a feature request is the shortest thing this skill produces, not a licence to argue the case at length.
+
+Example:
+
+> `build_client` takes a retry policy but gives no way to see what it resolved to, so debugging a misconfigured client means reading the constructor. An accessor would do it:
+>
+> ```python
+> client = build_client(retry_policy="exponential")
+> client.effective_config  # {"retry_policy": "exponential", "timeout_s": 30, ...}
+> ```
+
+And a feature whose API is obvious needs no code block at all:
+
+> `find_MAP` returns a `DataTree` but its annotation still says `dict`, so editors autocomplete the wrong thing.
 
 ## Voice
 
 Write like you're telling a colleague what's broken, in a hurry, from your phone. Contractions are fine. Sentence fragments are fine. Naming the thing plainly and stopping is the goal.
 
-**American English. Always.** British spellings in an issue body are an instant tell.
+American English, always. British spellings in an issue body are an instant tell.
 
 Skip the technical-report register. If a phrase would sound stilted said out loud, it's wrong here. No hedging a diagnosis you're confident in, no apologizing for filing, no announcing what the issue is about before saying it ("this issue reports...").
 
@@ -69,18 +92,25 @@ Casual register is not permission to be cute. Never soften a real technical cons
 
 ## What to leave out
 
-One test, applied to every clause: **could the maintainer get this from the title and the MWE?** If yes, cut it. The body exists to tell them why to look and what to watch for -- nothing else.
+One test, applied to every clause: could the maintainer get this from the title and the MWE? If yes, cut it.
 
-That test does most of the work, but it's easy to pass in spirit and fail in practice, because detail you just spent an hour on feels load-bearing when it isn't. Two habits to watch for:
+That test has a hole, and it matters more here than the same test does in `lazy-pr`. The MWE shows the symptom; it never shows the cause. So the cause is the one thing the test can never license cutting, and a sentence that only restates what the reader is about to watch happen is a caption, not an issue. If you know why it breaks, that is what the sentence is for. If you don't know, say what you observed and don't invent one.
 
-- **Precision the prose doesn't need.** Exact line numbers, full symbol paths, enumerated call chains, version matrices. If a category-level phrase covers it, use the category and let the MWE supply the specifics. Name a version only when the bug is version-dependent.
-- **The story of the debugging.** How you found the cause, what you ruled out, what you tried first, what the fix would probably be. This is the most tempting material and the least useful; it belongs in chat, or in the PR that fixes it.
+The sentence also has to land for someone who has never seen this code. A PR reviewer always has the diff to fall back on; a maintainer opening a fresh issue has your sentence and your script and nothing else. Opening on a private helper or an internal term as though it were shared context fails that reader completely.
 
-**A body that fails the test:**
+Past that, the test does most of the work, but it's easy to pass in spirit and fail in practice, because detail you just spent an hour on feels load-bearing when it isn't. Check the draft against each of these by name:
+
+- Precision the prose doesn't need. Exact line numbers, full symbol paths, enumerated call chains, version matrices. If a category-level phrase covers it, use the category and let the MWE supply the specifics. Name a version only when the bug is version-dependent.
+- The story of the debugging. How you found the cause, what you ruled out, what you tried first. The most tempting material and the least useful; it belongs in chat.
+- Arguing for the fix. A short proposed fix is welcome and often the most useful thing in the issue, but it belongs in a code block under a plain `Potential fix (requires testing):` line, not in prose, and it stops there. The moment it becomes a case for an approach, weighing alternatives or pre-empting the design, it is the PR's content and it goes in the PR.
+- Severity theater. "Critical", "blocking", "urgent", "this should be prioritized". Triage is the maintainer's job and they are better at it than you are; state what breaks and let the facts carry it.
+- A sentence that restates the title. If the title already says the symptom, the sentence exists to add the cause. If it can't, the issue is a title and an MWE, and that is a complete issue.
+
+A body that fails the test:
 
 > While tracing this I found that `_build_config` at `src/rx/config/loader.py:88` shallow-copies the options dict before the decorator merges defaults, so any key set by the caller after import time is silently discarded. I checked and this affects `retry_policy`, `timeout_s`, and `backoff_factor` on both 0.14.2 and 0.15.0. A deep merge would fix it, though a targeted fix to just `retry_policy` is also possible -- happy to open a PR either way.
 
-**The same issue:**
+The same issue:
 
 > Caller-set options are silently dropped when they land after the defaults merge, so `retry_policy` never takes effect.
 >
