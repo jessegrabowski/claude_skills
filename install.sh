@@ -125,6 +125,33 @@ for name in "${CONFIG_FILES[@]}"; do
     linked=$((linked + 1))
 done
 
+PI_DIR="$HOME/.pi/agent"
+
+# Pi expects its global config as AGENTS.md, not CLAUDE.md. Only act if pi is installed.
+for name in CLAUDE.md; do
+    src="$REPO/config/$name"
+    dest="$PI_DIR/AGENTS.md"
+
+    if [ ! -d "$PI_DIR" ]; then
+        continue
+    fi
+
+    if [ ! -f "$src" ]; then
+        continue
+    fi
+
+    if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+        echo "real file, skipping: $dest (move it into $REPO/config/ to sync it)"
+        skipped=$((skipped + 1))
+        continue
+    fi
+
+    run mkdir -p "$PI_DIR"
+    run ln -sfn -- "$src" "$dest"
+    echo "linked (pi): AGENTS.md"
+    linked=$((linked + 1))
+done
+
 echo
 if [ "$swept" -eq 1 ]; then
     echo "$linked linked, $skipped skipped, 1 stale link swept."
