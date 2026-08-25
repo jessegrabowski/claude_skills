@@ -1,6 +1,16 @@
 ---
 name: code-review
-description: Demanding, honest code review that reports findings without touching your files, git, or PRs. Use whenever the user wants code reviewed, critiqued, stress-tested, roasted, torn apart, or held to a production bar -- a specific file, a module, a branch/PR diff, or the current working changes -- or asks "is this shippable", "what's wrong with this", "would this survive review", "raise the bar on X". Depth is tunable: a quick blocker-only triage, a standard full review (default), or a deep paranoid audit (--deep). Reports and recommends only; to APPLY quality fixes reach for improve-code, and for a dedicated test-quality/coverage audit reach for improve-tests. Trigger even without the word "review" -- e.g. "find the problems in loader.py", "tear this apart", "what would a senior engineer flag here".
+description: >-
+   Demanding, honest code review that reports findings without touching your files, git, or
+   PRs. Use whenever the user wants code reviewed, critiqued, stress-tested, roasted, torn
+   apart, or held to a production bar -- a specific file, a module, a branch/PR diff, or the
+   current working changes -- or asks "is this shippable", "what's wrong with this", "would
+   this survive review", "raise the bar on X". Depth is tunable: a quick blocker-only triage, a
+   standard full review (default), or a deep paranoid audit (--deep). Reports and recommends
+   only; to APPLY quality fixes reach for improve-code, and for a dedicated
+   test-quality/coverage audit reach for improve-tests. Trigger even without the word "review"
+   -- e.g. "find the problems in loader.py", "tear this apart", "what would a senior engineer
+   flag here".
 ---
 
 A demanding, honest code review that reports -- it never edits files, commits, or comments on a PR. You read the code, find what actually costs the team, and say so plainly. Attack the work, never the author. The failure mode to avoid is polite-but-vague: a review that could apply to any codebase is a failed review. Clarity over comfort, every time.
