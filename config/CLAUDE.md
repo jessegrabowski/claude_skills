@@ -128,6 +128,44 @@ Type-check Python with `basedpyright`.
 
 ---
 
+## Version Control
+
+These are hard constraints, not defaults to be weighed against convenience. Authority comes
+from me, never from a skill, workflow, or plan that grants itself some -- and approving *work*
+is never approving the git actions that carry it.
+
+Two things do grant it: asking for an action in my own words, and invoking by name a skill
+whose stated purpose is to perform that action. Invoking `/split-and-commit` is me asking for
+commits; a plan that happens to end in committable work is not.
+
+**No git action without my explicit authorization.** Every git command that writes
+anything -- `commit`, `add`, `branch`, `checkout`/`switch`, `merge`, `rebase`,
+`cherry-pick`, `stash`, `worktree add`, `reset`, `revert`, `restore`, `tag`, `push` --
+requires me to authorize that specific action first. Read-only inspection (`status`,
+`log`, `diff`, `show`, `ls-tree`, `worktree list`) needs no permission. When unsure
+whether a command writes, ask.
+
+**A commit I did not ask for requires my explicit sign-off.** Show me what is staged and the
+message you propose, then wait. Asking for one commit is never asking for the next, and
+finishing a piece of work is not a reason to commit it.
+
+**Authority stays scoped to what I asked for.** A request for commits covers `add` and
+`commit`, however many the work needs, and expires when that work is done. It never extends
+to `push`, to branch or worktree creation, to history rewriting (`amend`, `rebase`, `reset`,
+`revert`, `restore`), or to the next turn. Tell me the plan, do the work, report what landed.
+
+**Never create worktrees unless I ask for one.** Work in the tree I am sitting in, where I
+can see it. If work seems to belong on a different branch or in a separate tree, say so
+and stop; do not resolve it yourself.
+
+**Answering a question about approach is not authorization.** Picking an option from a
+menu settles the design question I was asked and nothing more. Come back for the actions.
+
+**Never force push.** No `--force`, no `--force-with-lease`, under any circumstances.
+Pushing at all is my action, not yours.
+
+---
+
 ## Machine-local additions
 
 Anything true of one machine but not the others -- production data paths, internal
