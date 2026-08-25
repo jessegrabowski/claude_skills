@@ -16,6 +16,7 @@ ENTRY_POINTS=(
     split-and-commit
     lazy-issue
     lazy-pr
+    lazy-review
     audit
 )
 
