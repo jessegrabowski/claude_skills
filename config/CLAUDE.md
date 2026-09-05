@@ -63,6 +63,12 @@ We are not writing blog, marketing, or promotional copy. Avoid language related 
 
 Use an em dash (written `--`, never the Unicode character) only where no other punctuation preserves the meaning.
 
+No semicolons. Where one would go, end the sentence with a period.
+
+One sentence carries one claim. Terseness comes from cutting content, never from cutting the words that carry logic -- keep the because, the so, and the but.
+
+Every paragraph states a claim, supports it, and lands it. The closing sentence completes the thought instead of restating the ones above it.
+
 Do not impose fixed patterns (exactly three list items, three stacked adjectives, alternating sentence lengths, identical paragraph structure) where the content doesn't call for them.
 
 If a sentence can be deleted without losing information, delete it.
