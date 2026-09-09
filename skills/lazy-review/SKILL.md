@@ -76,7 +76,8 @@ Read `references/audit-passes.md` for which passes fit what you found.
 
 Fan out read-only explore agents, one per coherent area, in a single batch. Give
 each agent the real scope from Phase 0, the specific questions you want answered,
-and an instruction to cite `file:line` for every claim.
+and an instruction to cite `file:line` for every claim. Those citations are for
+your verification and your notes. They do not go into comments.
 
 Ask each agent for the things you cannot cheaply get yourself:
 
@@ -127,8 +128,9 @@ Write artifacts as you go; `references/artifacts.md` has the folder, the note
 layout, and the payload format the posting script reads.
 
 Tag every finding **confirmed** (you read the chain) or **suspected** (mechanism
-plausible, not traced). A suspected finding gets verified before the review, or
-it gets dropped. It does not get downgraded into a question -- a question is for
+plausible, not traced). The chain is recorded in `02_findings.md` and nowhere
+else. A comment never demonstrates that you read it. A suspected finding gets
+verified before the review, or it gets dropped. It does not get downgraded into a question -- a question is for
 what the code cannot answer, not for a hunch you ran out of time to check.
 
 Sort findings by what they cost:
@@ -139,7 +141,8 @@ Sort findings by what they cost:
    function -- things that make the blockers hard to fix.
 3. **Shape.** Files that belong in another PR, committed data, scope creep. Often
    the largest line-count reduction available and the easiest to agree on.
-4. **Conventions.** Stated rules broken, at counted sites.
+4. **Conventions.** Stated rules broken. Count the sites in the notes. The
+   comment names the rule and the site it sits on.
 
 ## Phase 6: draft the review
 
@@ -182,10 +185,12 @@ findings is strongest exactly when there is least to report.
 ### The body
 
 Lead with the thing that changes the size of the job -- usually the base branch.
-Then the blockers as a numbered list, each one line, each ending in its comment
-ID. One line means one line: the mechanism, the chain, and the fix are all in the
-comment that ID points at, and restating them here writes the review twice and
-makes the list unskimmable in the one place it needs to be skimmed. Then the ask
+Then the blockers as a numbered list, each one line, each ending in the
+`path:line` of its comment. GitHub does not show the author your comment IDs,
+so `C01` means nothing to them. One line means one line: the fix is in the
+comment, the mechanism is in your notes, and restating either here writes the
+review twice and makes the list unskimmable in the one place it needs to be
+skimmed. Then the ask
 -- what you want the author to do, concretely. For a big PR that is almost always
 a split, so give the split as a table of PRs with line counts.
 
@@ -196,49 +201,111 @@ would learn it by opening the comment, it does not belong here.
 
 One sentence on what is working earns its place, because a review that lists only
 faults reads as though the whole thing was judged uncharitably and gets
-discounted accordingly. One sentence, not a paragraph, and only things you
-actually verified.
+discounted accordingly. One sentence carrying one claim, not five clauses joined
+by commas, and only a thing you actually verified.
 
-No headings. No "Summary / Findings / Recommendations" scaffolding. No paragraph
-explaining what a good PR would look like.
+No headings. No bold. No "Summary / Findings / Recommendations" scaffolding. No
+paragraph explaining what a good PR would look like.
 
 ### Each comment
 
-One sentence saying what to change. A second only when the first does not parse
-without it. A code snippet in place of prose whenever the fix is code, and a
-measured number whenever you have one. Many comments are one clause and a line
-number, and those are the good ones.
+A comment is an instruction. It has one form: an imperative sentence naming the
+edit, then at most one sentence of reason, then a code snippet if the fix is
+code. That is the whole comment. Two sentences is the cap, and most comments are
+one.
 
-Past about forty words, the excess is almost never the finding -- it is one of
-the items in the list below, and the list is the thing to check rather than a
-word count. Trim there and the comment lands where it should on its own.
+The reason sentence exists only when the author would push back without it. "This
+is only called once, inline it" needs no reason. "Index off `_tenor_bucket`, not
+`tb`" needs one: "`tb` came from the pre-join frame and polars doesn't guarantee
+join order." The reason is one claim. It is not the call chain, the mechanism
+three files away, the consumer that makes it matter, or the number of rows you
+checked. All of that is in `02_findings.md`, and the author can ask.
 
-Lead with the action as a plain sentence. The failure mode to avoid is a bolded
-imperative prefix on every comment -- `**Validate the cached registry.**` reads
-as a machine template by the third one, and thirty of them read as a form letter.
-Say what to do in an ordinary sentence and stop.
+One sentence carries one claim. No em-dashes. No colons joining two independent
+clauses. No parentheticals. No `Fix:` labels. No bold anywhere, including the
+opening words. Contractions are fine.
+
+One comment names one edit. A second thing wrong on the same line is a second
+comment on that line, never a "Separately, ..." tacked onto the first. A finding
+that recurs gets one comment carrying the reason and one line at each other site
+pointing back by `path:line`: "`edge_sources.py` is gone, same as
+`cohorts.py:110`." Never point at another comment by its `C` id, because the
+author cannot see those.
+
+A number belongs in a comment only when the number is the edit: the wrong value
+next to the right one, or the count of sites the author has to touch. A
+complexity score, a row count you verified against, or a percentage that shows
+how bad it is stays in the notes.
+
+Cite a location other than the anchored line only when the fix is at that other
+location. The one-line pointer above is the case. A path cited to show where the
+consequence lands is the chain, and the chain stays out.
 
 What does not belong in a comment:
 
 - Praise, or a preamble crediting the author before the finding. If the code is
   fine, there is no comment.
-- Anything you chased and cleared. It cost you time; it costs the author nothing
-  to never hear about it.
+- Anything you chased and cleared. "Order holds on the pinned version, checked"
+  is cleared work. It cost you time; it costs the author nothing to never hear
+  about it.
 - The story of how you found it.
 - Your reasoning about severity, or how many other places you checked.
+- An answer to an objection the author has not made. If you are rebutting the
+  code comment beside the line, you are arguing in advance. State the edit.
+- The rulebook. Say the rule. Never "CLAUDE.md rules this out" or "CLAUDE.md
+  mandates American English". The author knows where the rules live.
 - Restating what the diff plainly shows.
 - Unfalsifiable adjectives -- "cleaner", "more robust", "better structured".
   Name the failure or cut the comment.
-- Signposting instead of stating -- "worth a look", "keep an eye on", "the
-  interesting bit". Name the consequence directly.
+- Signposting instead of stating -- "worth a look", "worth a second test",
+  "keep an eye on", "the interesting bit". Name the edit directly.
 
-A question is a legitimate comment when the code cannot answer it. Ask it
-directly, say what turns on the answer, and give the command that settles it.
+A question is a legitimate comment when the code cannot answer it. Ask it in one
+sentence, say in one sentence what turns on the answer, and stop. If a command
+settles it, that command replaces the second sentence.
+
+### Examples
+
+Before and after, from real reviews.
+
+> **Make this opt-in and loud, or restore the real query.** `delta_bp=0.0` here reaches `linprog/result.py:42`, where `eqty_allocation = -allocation_sod / 1000 * delta_bp` becomes identically 0, taking `eqty_pos_pnl` and `gmv_eqty_allocation_sod` with it -- the LP engine's whole equity hedge leg. `long_dur_lp.py`, added in this PR, reaches it via `long_liquid_book.load_universe:78`, so any LP number in the memo has no equity hedge and doesn't disclose it. The comment says "only `backtest/linprog/result.py` reads `delta_bp`" -- that file is the consumer. Fix: `opscore: Literal["query", "disabled"] = "query"`, `RuntimeWarning` on the disabled branch. If `opscore_straights_results` no longer resolves `delta_bp`, that's an upstream schema fix, not a silent literal. Note the table-name fix at `data_utils.py:1739` now has zero live callers, so it's unverified.
+
+> Make the `delta_bp` stub opt-in and warn when it's on, or restore the query. Stubbing it to zero removes the LP engine's equity hedge, and `long_dur_lp.py` reaches this path.
+
+> Index the multiplier off the `_tenor_bucket` column rather than off `tb`. `tb` was computed at line 163 from the pre-join frame; `w` here is post-join, and polars documents `maintain_order` as defaulting to `'none'` -- "the ordering might differ across Polars versions or even between different runs... do not rely on any observed ordering". Order does hold on the pinned 1.42.1 (checked, 0/200,000 rows mismatched with the real rating x tenor x adv key shape), so today's numbers are fine; a polars bump permutes the level correction across bond-days with nothing raising. `_tenor_bucket` survives the join until line 195, so it's a one-line swap. The test can't catch this either -- `test_liq_tc.py:140` says "only bucket 1 is exercised by this panel", so every row shares one multiplier and any permutation is invisible. Worth a second test row in another bucket. Separately, `.drop("_mult", strict=False)` on line 187 is a no-op: `pl.col(out_col) * mult` takes its name from the left operand, so `_mult` is never a column.
+
+That is three comments:
+
+> Index the multiplier off `_tenor_bucket`, not `tb`. `tb` came from the pre-join frame and polars doesn't guarantee join order.
+
+> Add a test row in a second tenor bucket. With one bucket every row shares a multiplier, so a permutation is invisible.
+
+> `.drop("_mult")` is a no-op. `pl.col(out_col) * mult` keeps the left operand's name, so `_mult` is never a column.
+
+> **Extract this block and test it.** 55 lines of new numerical logic, no test, inside a method measured at 1,154 lines and cyclomatic complexity **175** (up from 163; the class went E35 to E38). The PR quotes "+40.5 bps headline" from this path and `git diff --stat -- src/systematic_credit/tests/` for the range is empty. Move it to `mip/sizing.py` as `base_cap_vector(edge_signal_vec, tc_vec, params, max_position_notional, min_position_notional, num_names) -> tuple[FloatArray | None, dict]`, returning `(None, {})` for `equal_weight`. Diff to `run` becomes three lines, `run` drops back to ~163, and C06/C07 become unit-testable without building a backtester.
+
+> Move this block to `mip/sizing.py` and test it there. It's 55 lines of new numerics with no test, and it can't be tested inside `run`.
+
+The good comments in the same reviews were already this shape:
+
+> `edge_sources.py` is gone -- see C21.
+
+> Call this `duration`. Aliasing it to `bval_dur_bid` gives it a Bloomberg field name it didn't come from.
+
+The first only needs its pointer changed from `C21` to `cohorts.py:110`.
 
 ### Voice
 
-American English. Short declarative sentences. Contractions are fine. Write like
-you are telling a colleague what to fix, not filing a report.
+Write for a colleague who wrote the code yesterday and is reading in a hurry.
+Short declarative sentences. Contractions are fine. No sentence fragments unless
+the fragment is the whole comment ("remove", "typo: unsqueezed").
+
+American English, always.
+
+Name code by its identifier. Never substitute a description you coined for a
+name that exists. No figurative verbs for what code does. Code does not walk
+into, reach, bite, sit in a state, or land in a parquet. It calls, reads,
+returns, drops, and raises.
 
 Never soften a real consequence with jokey framing, and never hedge a finding you
 verified. If a comment is important enough to post, say it straight.
