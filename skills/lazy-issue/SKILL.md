@@ -22,19 +22,23 @@ An issue is closed when its problem is fixed, so two problems in one issue can n
 
 A second symptom the *same* cause produces is the opposite case. That stays in the one issue and usually in the one sentence, because it is evidence about a single problem rather than a second problem.
 
-This is where an issue and a PR part company. In `lazy-pr` a genuinely separate change earns a second paragraph in the same description. Here it earns its own issue, because the unit being closed is the problem, not the work.
+This is where an issue and a PR part company. In `lazy-pr` a genuinely separate change earns its own paragraph in the same description. Here it earns its own issue, because the unit being closed is the problem, not the work.
 
 ## The format
 
-A good issue is three things and nothing else. A title under 80 chars that names the symptom and, if it fits, the cause -- `pm.sample segfaults on Apple Silicon: fork default + Accelerate BLAS`, not `Bug in sampling`. One tweet-length sentence saying what breaks and why. And a code block: for a bug, a complete runnable MWE, with the workaround as a trailing comment in the code rather than as prose.
+A good issue is three things and nothing else. A title under 80 chars that names the symptom and, if it fits, the cause -- `pm.sample segfaults on Apple Silicon: fork default + Accelerate BLAS`, not `Bug in sampling`. A short paragraph saying what breaks and why. And a code block: for a bug, a complete runnable MWE, with the workaround as a trailing comment in the code rather than as prose.
 
-That is the entire body, with one addition that earns its way in: a number you actually measured. A timing, a wrong value next to the right one, a rate. Those are the one thing a maintainer can neither derive from the MWE nor take on trust, and an issue that has them should keep them even when that makes it the longest one you file. No `Description`, `Analysis`, `Severity`, `Steps to Reproduce`, `Expected vs Actual`, or `What needs to be done` headings. No emoji section markers, no bolded key-phrases. If a fact doesn't fit in the sentence and isn't visible in the MWE, it's probably not worth saying.
+The paragraph is built in a fixed order. The first sentence states what breaks, using the real identifier and saying what kind of thing it is: `pm.sample` is a function, `Courts of Otosan Uchi` is a card, `load_cards` is the loader. A maintainer who has never opened this repo reads that sentence and knows what the issue is about. The second sentence says why, if you know why. If you don't, say what you observed and stop. Cause never precedes symptom, and a sentence that opens on a mechanism whose symptom has not appeared yet is out of order.
+
+One sentence carries one claim. No em-dashes. No colons joining two independent clauses. A sentence has at most one subordinate clause. If the because, the so, and the but need more room, they get their own sentence. The paragraph is two or three sentences, and a third exists only to carry a consequence the maintainer needs before opening the MWE.
+
+That is the entire body, with one addition that earns its way in: a number you actually measured. A timing, a wrong value next to the right one, a rate. Those are the one thing a maintainer can neither derive from the MWE nor take on trust, and an issue that has them should keep them even when that makes it the longest one you file. No `Description`, `Analysis`, `Severity`, `Steps to Reproduce`, `Expected vs Actual`, or `What needs to be done` headings. No emoji section markers, no bolded key-phrases, no bullet inventories of files or symbols. If a fact doesn't fit in the paragraph and isn't visible in the MWE, it's probably not worth saying.
 
 Don't gather permalinks to decorate a diagnosis -- the maintainer can find the code. The exception is when the exact lines *are* the request: a one-line annotation fix or a constant that's wrong is clearest as a link straight to it, and then the link replaces the explanation rather than padding it.
 
 Example body:
 
-> On Apple Silicon `pm.sample` defaults to `mp_ctx="fork"`, but conda's numpy now links Apple Accelerate whose worker threads don't survive `fork()`, so any model large enough to hit Accelerate's threaded BLAS path segfaults every chain worker.
+> `pm.sample` segfaults in every chain worker on Apple Silicon once the model is large enough to hit a threaded BLAS path. The default `mp_ctx="fork"` is the cause. conda's numpy now links Apple Accelerate, and Accelerate's worker threads don't survive `fork()`.
 >
 > ```python
 > import numpy as np
@@ -65,11 +69,11 @@ Example, no repro available:
 
 ## Features, not bugs
 
-Same discipline: one sentence on what you want and why it's worth doing, and -- only if it clarifies -- a short code block showing the desired API or call site as you'd want it to read. No MWE to run, no roadmap, no deliverables list. There is no repro to earn effort here, so a feature request is the shortest thing this skill produces, not a licence to argue the case at length.
+Same discipline: one sentence on what you want, one on why it's worth doing, and -- only if it clarifies -- a short code block showing the desired API or call site as you'd want it to read. No MWE to run, no roadmap, no deliverables list, no sketch of the implementation, no inventory of the files it would touch. There is no repro to earn effort here, so a feature request is the shortest thing this skill produces, not a license to argue the case at length.
 
 Example:
 
-> `build_client` takes a retry policy but gives no way to see what it resolved to, so debugging a misconfigured client means reading the constructor. An accessor would do it:
+> `build_client` should expose the config it resolved to. It takes a retry policy today but gives no way to read it back, so debugging a misconfigured client means reading the constructor. An accessor would do it:
 >
 > ```python
 > client = build_client(retry_policy="exponential")
@@ -82,29 +86,35 @@ And a feature whose API is obvious needs no code block at all:
 
 ## Voice
 
-Write like you're telling a colleague what's broken, in a hurry, from your phone. Contractions are fine. Sentence fragments are fine. Naming the thing plainly and stopping is the goal.
+Write for a maintainer who has never opened this repo and is reading in a hurry. Contractions are fine. Plain declarative sentences are the goal. No sentence fragments.
 
 American English, always. British spellings in an issue body are an instant tell.
 
+Name code by its identifier, then say in plain words what kind of thing it is. Never substitute a description you coined for a name that exists.
+
+No figurative verbs for what code does. Code does not bite, walk, reach across, go live, sit below, or leak. It calls, reads, imports, returns, raises, and drops.
+
 Skip the technical-report register. If a phrase would sound stilted said out loud, it's wrong here. No hedging a diagnosis you're confident in, no apologizing for filing, no announcing what the issue is about before saying it ("this issue reports...").
 
-Casual register is not permission to be cute. Never soften a real technical consequence with diminishing or jokey framing -- "one wrinkle", "small gotcha", "fun catch", "worth noting though". A caveat that changes behavior, breaks an invariant, or needs a maintainer's decision is stated flatly as what it is: name the thing that breaks and what it forces. If it's important enough to include, it's important enough to say straight.
+Plain register is not permission to be cute. Never soften a real technical consequence with diminishing or jokey framing -- "one wrinkle", "small gotcha", "fun catch", "worth noting though". And never signpost instead of stating -- "worth doing properly", "blast radius", "where it lives", "one decision first". A caveat that changes behavior, breaks an invariant, or needs a maintainer's decision is stated flatly as what it is: name the thing that breaks and what it forces. If it's important enough to include, it's important enough to say straight.
 
 ## What to leave out
 
 One test, applied to every clause: could the maintainer get this from the title and the MWE? If yes, cut it.
 
-That test has a hole, and it matters more here than the same test does in `lazy-pr`. The MWE shows the symptom; it never shows the cause. So the cause is the one thing the test can never license cutting, and a sentence that only restates what the reader is about to watch happen is a caption, not an issue. If you know why it breaks, that is what the sentence is for. If you don't know, say what you observed and don't invent one.
+That test has a hole, and it matters more here than the same test does in `lazy-pr`. The MWE shows the symptom; it never shows the cause. So the cause is the one thing the test can never license cutting, and a sentence that only restates what the reader is about to watch happen is a caption, not an issue. If you know why it breaks, that is what the second sentence is for. If you don't know, say what you observed and don't invent one.
 
-The sentence also has to land for someone who has never seen this code. A PR reviewer always has the diff to fall back on; a maintainer opening a fresh issue has your sentence and your script and nothing else. Opening on a private helper or an internal term as though it were shared context fails that reader completely.
+The test bounds detail, never the first sentence. The symptom sentence is always derivable from the MWE, and it stays anyway, because a maintainer opening a fresh issue has your paragraph and your script and nothing else. Opening on a private helper or an internal term as though it were shared context fails that reader completely.
 
 Past that, the test does most of the work, but it's easy to pass in spirit and fail in practice, because detail you just spent an hour on feels load-bearing when it isn't. Check the draft against each of these by name:
 
-- Precision the prose doesn't need. Exact line numbers, full symbol paths, enumerated call chains, version matrices. If a category-level phrase covers it, use the category and let the MWE supply the specifics. Name a version only when the bug is version-dependent.
-- The story of the debugging. How you found the cause, what you ruled out, what you tried first. The most tempting material and the least useful; it belongs in chat.
+- Enumeration the prose doesn't need. Exact line numbers, enumerated call chains, version matrices, lists of the files involved. Let the MWE supply the specifics. This licenses cutting lists, never replacing an identifier with a description you invented. Name a version only when the bug is version-dependent.
+- The story of the debugging. How you found the cause, what you ruled out, what you tried first. The most tempting material and the least useful; it belongs in chat. A mechanism is not story when it explains a symptom already stated on the page. It is story when it stands in for that statement.
 - Arguing for the fix. A short proposed fix is welcome and often the most useful thing in the issue, but it belongs in a code block under a plain `Potential fix (requires testing):` line, not in prose, and it stops there. The moment it becomes a case for an approach, weighing alternatives or pre-empting the design, it is the PR's content and it goes in the PR.
 - Severity theater. "Critical", "blocking", "urgent", "this should be prioritized". Triage is the maintainer's job and they are better at it than you are; state what breaks and let the facts carry it.
-- A sentence that restates the title. If the title already says the symptom, the sentence exists to add the cause. If it can't, the issue is a title and an MWE, and that is a complete issue.
+- A sentence that restates the title. If the title already says the symptom, the second sentence exists to add the cause. If it can't, the issue is a title and an MWE, and that is a complete issue.
+- A justification with no antecedent. A sentence that explains why, when the what has not appeared yet. Move the what in front of it.
+- A coined phrase where an identifier belongs. "The escape guard", "the set-file walk", "the sandbox surface", when the code has a name. Use the name, then say what kind of thing it is.
 
 A body that fails the test:
 
@@ -112,7 +122,7 @@ A body that fails the test:
 
 The same issue:
 
-> Caller-set options are silently dropped when they land after the defaults merge, so `retry_policy` never takes effect.
+> `build_client` ignores `retry_policy` and any other option the caller sets. `_build_config` shallow-copies the options dict before the defaults merge, so caller-set keys are dropped.
 >
 > ```python
 > from rx.config import build_client
@@ -120,6 +130,12 @@ The same issue:
 > client = build_client(retry_policy="exponential")
 > print(client.retry_policy)  # "none"
 > ```
+
+Cause first, then the same issue with the symptom first:
+
+> `Resolver` types `source_id` as `str | None` because the rulebook's Cycle raises its `Choose` without a source, but 25 of the 29 registered resolvers declare it as plain `str`. Narrowing a parameter breaks contravariance, so every one of them is an invalid `Resolver` -- `basedpyright` reports 25 errors across `rules/cards/`. Nothing bites today only because each of those resolvers happens to be reached from decisions that always carry a source, which nothing enforces and no signature records.
+
+> 25 of the 29 registered choice resolvers fail type checking, because they declare `source_id: str` where the `Resolver` protocol says `str | None`. `basedpyright` reports one error per resolver across `rules/cards/`. Nothing fails at runtime today, because every one of those resolvers is only reached from decisions that carry a source, and nothing enforces that.
 
 ## Explore only as far as the sentence needs
 
