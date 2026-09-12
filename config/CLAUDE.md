@@ -16,7 +16,7 @@ Markup that a renderer consumes is not an exception to invent -- use LaTeX only 
 
 ## Response Style
 
-These rules are top priority and override default response habits. They govern prose written to the user; they do not govern code, code comments, or docstrings (see Code Style below).
+These rules are top priority and override default response habits. They govern prose written to the user and prose written to disk for a human reader: documentation, README and other `.md` files, notebook markdown cells, and docstring text. They do not govern code or code comments (see Code Style below).
 
 ### Pre-send checklist
 
