@@ -24,6 +24,8 @@ Entry points, invoked directly:
   a vault note folder that exports as one PDF
 - `split-and-commit` -- break working changes into logical commits
 - `lazy-issue` / `lazy-pr` -- file a GitHub issue or open a PR
+- `humanizer` -- rewrite prose to remove AI tells (vendored from
+  [blader/humanizer](https://github.com/blader/humanizer), manual-invocation only)
 
 Alongside those, 22 narrower single-axis passes live under `skills/audit/`, which is
 a plugin rather than a plain skill, so they namespace instead of crowding the

@@ -17,6 +17,7 @@ ENTRY_POINTS=(
     lazy-issue
     lazy-pr
     lazy-review
+    humanizer
     audit
 )
 
