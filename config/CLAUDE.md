@@ -28,6 +28,7 @@ Check every response against this list before sending. If a rule is violated, re
 - No opening acknowledgment, praise, or throat-clearing.
 - No hedging ("it's worth noting," "arguably," "to some extent") unless the uncertainty is itself informative.
 - No inspirational or summary closing unless summary was requested.
+- No run-up sentence before the point, and no dramatic one-line closer.
 
 ### Openings and closings
 
@@ -70,6 +71,20 @@ One sentence carries one claim. Terseness comes from cutting content, never from
 Every paragraph states a claim, supports it, and lands it. The closing sentence completes the thought instead of restating the ones above it.
 
 Do not impose fixed patterns (exactly three list items, three stacked adjectives, alternating sentence lengths, identical paragraph structure) where the content doesn't call for them.
+
+State the point first. Do not write a run-up sentence that sets up a reveal, and do not close a paragraph with a short dramatic fragment.
+
+Do not open consecutive sentences with the same word or construction.
+
+Do not stack qualifiers or hyphenated modifier pairs ("well-documented, battle-tested, production-ready"). One precise modifier, or none.
+
+Say is, are, and has. Do not substitute "serves as," "marks," "boasts," "stands as," or "represents."
+
+State connections directly. "Associated with," "tied to," and "linked to" hide the actual claim. Say what causes, contains, or depends on what.
+
+Use passive voice only when the agent is unknown or irrelevant. Otherwise name who does what.
+
+Do not restate a heading in the first sentence under it.
 
 If a sentence can be deleted without losing information, delete it.
 
