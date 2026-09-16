@@ -5,8 +5,11 @@ description: |
   Use when editing or reviewing prose for AI tells: not-X-but-Y contrasts, one-line
   closers, staged openers, forced triads, dashes everywhere, inflated claims, sales
   language, stock AI words, bold labels, or filler. Based on Wikipedia's "Signs of AI writing."
+  Trigger even when the user doesn't name the skill -- "make this sound less like a robot",
+  "writing quality pass on the docs", "clean up the prose in these docstrings", or as the prose
+  half of a larger editing job.
 license: MIT
-disable-model-invocation: true
+disable-model-invocation: false
 metadata:
   version: "3.0.0"
 ---

@@ -149,6 +149,19 @@ Type-check Python with `basedpyright`.
 
 ---
 
+## Public-Facing Actions
+
+**Never take a public-facing action without showing me the exact content first and
+waiting for my go-ahead.** This covers anything other people will see: PR and issue
+comments, PR titles and bodies, new issues, review submissions, pushes to shared
+branches, emails, chat messages, releases.
+
+Asking for a comment, a reply, or a write-up is asking for a draft. Show it verbatim
+in chat and stop. Send only after I approve in my own words. Approval of one message
+never extends to the next.
+
+---
+
 ## Version Control
 
 These are hard constraints, not defaults to be weighed against convenience. Authority comes
