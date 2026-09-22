@@ -148,9 +148,11 @@ Sort findings by what they cost:
 
 ### Which findings become comments
 
-A comment earns its place if the author has to edit a line because of it. Not
-"would find useful", not "should know about" -- has to edit. That is a quality
-gate, and it is the only gate. There is no comment budget.
+A comment earns its place if it needs a response from the author -- an edit, or
+an answer. "Why local import?" earns its place even though it names no edit,
+because the author has to say something and the thread stays open until they do.
+What does not earn its place is a fact the author cannot act on and does not have
+to answer. There is no comment budget.
 
 Resist the urge to add one, because two facts about the medium make a count
 ceiling actively harmful. An inline comment is anchored: the author meets it
@@ -184,48 +186,100 @@ findings is strongest exactly when there is least to report.
 
 ### The body
 
-Lead with the thing that changes the size of the job -- usually the base branch.
-Then the blockers as a numbered list, each one line, each ending in the
-`path:line` of its comment. GitHub does not show the author your comment IDs,
-so `C01` means nothing to them. One line means one line: the fix is in the
-comment, the mechanism is in your notes, and restating either here writes the
-review twice and makes the list unskimmable in the one place it needs to be
-skimmed. Then the ask
--- what you want the author to do, concretely. For a big PR that is almost always
-a split, so give the split as a table of PRs with line counts.
+Two to four sentences of prose. No headings, no bold, no numbered list, and no
+`path:line` references -- the comments carry those, and duplicating them writes
+the review twice.
 
-The body is where the length you saved on the comments comes back if you let it.
-Anything a comment already carries stays out of it: no repeating a mechanism, no
-second copy of a fix, no inventory of what you checked and cleared. If the author
-would learn it by opening the comment, it does not belong here.
+Lead with the one thing too big to anchor: a base branch that needs retargeting,
+a split, an architecture concern. One item, in prose, with its reasoning. This is
+the only place reasoning belongs. If the ask is a different API shape, sketch it
+in a code block. For a big PR the ask is almost always a split, so give the split
+as a table of PRs with line counts.
 
-One sentence on what is working earns its place, because a review that lists only
-faults reads as though the whole thing was judged uncharitably and gets
-discounted accordingly. One sentence carrying one claim, not five clauses joined
-by commas, and only a thing you actually verified.
+Then the state of the review if it is not complete: which files were covered and
+which were not. A review that silently stops halfway is worse than one that says
+so.
 
-No headings. No bold. No "Summary / Findings / Recommendations" scaffolding. No
-paragraph explaining what a good PR would look like.
+One sentence on what is working, only if you verified it and only stated as a
+fact -- "the mlx suite passes locally", "the MvNormal factorizations check out
+numerically". Not an assessment of the work or the author.
+
+Everything a comment already carries stays out.
 
 ### Each comment
 
-A comment is an instruction. It has one form: an imperative sentence naming the
-edit, then at most one sentence of reason, then a code snippet if the fix is
-code. That is the whole comment. Two sentences is the cap, and most comments are
-one.
+A comment is short. In the reviews this skill is modeled on, the median is
+fifteen words and a third are under ten. Those are targets, not trivia: if your
+drafted set has a median near twenty-five and only one or two fragments in it,
+the comments are carrying explanation the author did not ask for, and the set
+will read as an essay however many findings are real.
 
-The reason sentence exists only when the author would push back without it. "This
-is only called once, inline it" needs no reason. "Index off `_tenor_bucket`, not
-`tb`" needs one: "`tb` came from the pre-join frame and polars doesn't guarantee
-join order." The reason is one claim. It is not the call chain, the mechanism
-three files away, the consumer that makes it matter, or the number of rows you
-checked. All of that is in `02_findings.md`, and the author can ask.
+A bare fragment is a complete comment: "remove", "module level", "pass a Mode",
+"unc -> unconstrained", "same as `cohorts.py:110`".
 
-One sentence carries one claim. No em-dashes. No colons joining two independent
-clauses. No parentheticals. No `Fix:` labels. No bold anywhere, including the
-opening words. Contractions are fine.
+Before you show the draft, do a cutting pass. Take each comment and ask what the
+shortest version is that still names the edit. Most lose their first clause,
+because the first clause usually restates where the reader already is.
 
-One comment names one edit. A second thing wrong on the same line is a second
+The cutting pass shortens comments. It never merges them, and the count only goes
+up during it. Rolling five sites into one comment that lists five paths looks like
+tightening and is the opposite: the author now has one thread for five edits, four
+of the five are not anchored where the work happens, and nothing tracks which ones
+got done. When a finding recurs, the first site carries the reason and every other
+site gets its own comment of about five words pointing back -- "duplicate
+`_file_sha256`, same as `production_contract.py:948`". Those pointers are most of
+how a review reaches a third of its comments under ten words, and they are the
+cheapest useful thing here.
+
+So the target comes out of the shape of the set, not out of compression. If the
+draft has no comments under ten words, the usual cause is repeats that got merged,
+not prose that needs trimming. A comment that genuinely resists cutting is either a
+real mechanism finding, which is fine and rare, or a teaching comment, which needs
+clearance.
+
+Three shapes carry almost everything. The imperative is the least common of them.
+
+**The edit.** What to change, plus at most one sentence of reason. The reason
+exists only when the author would push back without it.
+
+> slice bounds come back as 0-d mx arrays here, so `x[1:4, idx]` still raises. cast the slice components to int
+
+**The question.** Post it when the author should justify a choice, even when the
+diff contains the answer. Three to eight words is normal. No preamble, and no
+statement of what turns on the answer unless that is genuinely unobvious.
+
+> Why local import?
+
+> Is this check possible to fail?
+
+> is this a test of pymc?
+
+> Do we need a whole new file for this?
+
+A question is not a softened instruction and never a finding you failed to
+verify. A suspected finding gets verified or dropped. Turning it into a question
+is the single most likely way this skill degrades, because a question costs
+nothing to write and looks like diligence.
+
+**The suggestion block.** When the fix is a literal token swap, paste it. Add a
+sentence only when the swap does not explain itself.
+
+````
+```suggestion
+    torch_dtype = getattr(torch, op.dtype)
+```
+````
+
+Mark severity explicitly. `nit:` for style, "not a blocker" for a real point that
+should not hold the merge. This is not hedging. It tells the author which of
+thirty comments to argue with, and omitting it makes every comment read as a
+demand.
+
+Defer scope out loud when the fix is real but does not belong in this PR: "leave
+for a follow-up PR", "open a TODO", "do it here for this test, new PR for the
+rest". Name what the follow-up covers.
+
+One comment names one thing. A second thing wrong on the same line is a second
 comment on that line, never a "Separately, ..." tacked onto the first. A finding
 that recurs gets one comment carrying the reason and one line at each other site
 pointing back by `path:line`: "`edge_sources.py` is gone, same as
@@ -255,24 +309,76 @@ What does not belong in a comment:
 - The rulebook. Say the rule. Never "CLAUDE.md rules this out" or "CLAUDE.md
   mandates American English". The author knows where the rules live.
 - Restating what the diff plainly shows.
-- Unfalsifiable adjectives -- "cleaner", "more robust", "better structured".
-  Name the failure or cut the comment.
-- Signposting instead of stating -- "worth a look", "worth a second test",
-  "keep an eye on", "the interesting bit". Name the edit directly.
+- Unfalsifiable adjectives dressed as verdicts -- "cleaner", "more robust",
+  "better structured". Name the failure, or mark it `nit:` and name the concrete
+  alternative.
+- Signposting instead of stating -- "worth a look", "keep an eye on", "the
+  interesting bit". Name the edit directly. This is not the same as marking
+  severity, which is required.
 
-A question is a legitimate comment when the code cannot answer it. Ask it in one
-sentence, say in one sentence what turns on the answer, and stop. If a command
-settles it, that command replaces the second sentence.
+### Comments that need clearance
+
+Two kinds of comment do not get posted without the user reading them first. Draft
+them, hold them in a separate block when you show the review, and post only what
+comes back approved.
+
+**Teaching comments.** Anything longer than about three sentences that explains a
+mechanism to the author rather than naming an edit. These are sometimes exactly
+right for a first-time contributor. They are also where a model is most likely to
+explain something wrong at length, or explain something the author already knows.
+Default to the short form and offer the long one beside it.
+
+**Taste.** A finding whose whole content is that a name, a layout, or an API shape
+is worse than an alternative, with no failure behind it. State it impersonally and
+concretely -- "`unc` is too abbreviated, `unconstrained`" -- and group these
+together when you show the draft. Some are worth posting and some are the model
+inventing an opinion, and only the user can tell which.
+
+Everything else follows the normal Phase 7 authorization.
+
 
 ### Examples
 
-Before and after, from real reviews.
+The shapes, from real reviews.
+
+**Edit with reason:**
+
+> slice bounds come back as 0-d mx arrays here, so `x[1:4, idx]` still raises. cast the slice components to int (AdvancedSubtensor above has the same bug, factor out a helper and use it in both)
+
+**Edit, no reason needed:**
+
+> collapse the four new tests into one parametrized over inc/set and index form, like `test_mlx_AdvancedIncSubtensor1_duplicate_indices` below
+
+**Fragment:**
+
+> drop this comment, it's a changelog. `# mirrors AdvancedIncSubtensor.perform` is plenty
+
+**Question:**
+
+> Why local import?
+
+**Nit:**
+
+> nit: `_set_data` is too close to `pm.set_data`, which changes the actual model data. `_set_data_info`?
+
+**Deferral:**
+
+> not a blocker, this duplicates `pytensor_ml/optim/base.py`. worth a follow-up to use that instead
+
+**Pointer to a repeated finding:**
+
+> `edge_sources.py` is gone, same as `cohorts.py:110`
+
+### Shortening an over-long finding
+
+The work that found a thing is not the comment. These are real first drafts and
+what they should have been.
 
 > **Make this opt-in and loud, or restore the real query.** `delta_bp=0.0` here reaches `linprog/result.py:42`, where `eqty_allocation = -allocation_sod / 1000 * delta_bp` becomes identically 0, taking `eqty_pos_pnl` and `gmv_eqty_allocation_sod` with it -- the LP engine's whole equity hedge leg. `long_dur_lp.py`, added in this PR, reaches it via `long_liquid_book.load_universe:78`, so any LP number in the memo has no equity hedge and doesn't disclose it. The comment says "only `backtest/linprog/result.py` reads `delta_bp`" -- that file is the consumer. Fix: `opscore: Literal["query", "disabled"] = "query"`, `RuntimeWarning` on the disabled branch. If `opscore_straights_results` no longer resolves `delta_bp`, that's an upstream schema fix, not a silent literal. Note the table-name fix at `data_utils.py:1739` now has zero live callers, so it's unverified.
 
 > Make the `delta_bp` stub opt-in and warn when it's on, or restore the query. Stubbing it to zero removes the LP engine's equity hedge, and `long_dur_lp.py` reaches this path.
 
-> Index the multiplier off the `_tenor_bucket` column rather than off `tb`. `tb` was computed at line 163 from the pre-join frame; `w` here is post-join, and polars documents `maintain_order` as defaulting to `'none'` -- "the ordering might differ across Polars versions or even between different runs... do not rely on any observed ordering". Order does hold on the pinned 1.42.1 (checked, 0/200,000 rows mismatched with the real rating x tenor x adv key shape), so today's numbers are fine; a polars bump permutes the level correction across bond-days with nothing raising. `_tenor_bucket` survives the join until line 195, so it's a one-line swap. The test can't catch this either -- `test_liq_tc.py:140` says "only bucket 1 is exercised by this panel", so every row shares one multiplier and any permutation is invisible. Worth a second test row in another bucket. Separately, `.drop("_mult", strict=False)` on line 187 is a no-op: `pl.col(out_col) * mult` takes its name from the left operand, so `_mult` is never a column.
+> Index the multiplier off the `_tenor_bucket` column rather than off `tb`. `tb` was computed at line 163 from the pre-join frame; `w` here is post-join, and polars documents `maintain_order` as defaulting to `'none'`. Order does hold on the pinned 1.42.1 (checked, 0/200,000 rows mismatched), so today's numbers are fine; a polars bump permutes the level correction with nothing raising. `_tenor_bucket` survives the join until line 195, so it's a one-line swap. The test can't catch this either -- `test_liq_tc.py:140` says "only bucket 1 is exercised by this panel". Worth a second test row in another bucket. Separately, `.drop("_mult", strict=False)` on line 187 is a no-op.
 
 That is three comments:
 
@@ -282,38 +388,48 @@ That is three comments:
 
 > `.drop("_mult")` is a no-op. `pl.col(out_col) * mult` keeps the left operand's name, so `_mult` is never a column.
 
-> **Extract this block and test it.** 55 lines of new numerical logic, no test, inside a method measured at 1,154 lines and cyclomatic complexity **175** (up from 163; the class went E35 to E38). The PR quotes "+40.5 bps headline" from this path and `git diff --stat -- src/systematic_credit/tests/` for the range is empty. Move it to `mip/sizing.py` as `base_cap_vector(edge_signal_vec, tc_vec, params, max_position_notional, min_position_notional, num_names) -> tuple[FloatArray | None, dict]`, returning `(None, {})` for `equal_weight`. Diff to `run` becomes three lines, `run` drops back to ~163, and C06/C07 become unit-testable without building a backtester.
+> **Extract this block and test it.** 55 lines of new numerical logic, no test, inside a method measured at 1,154 lines and cyclomatic complexity **175** (up from 163; the class went E35 to E38). The PR quotes "+40.5 bps headline" from this path and `git diff --stat -- src/systematic_credit/tests/` for the range is empty. Move it to `mip/sizing.py` as `base_cap_vector(...)`, returning `(None, {})` for `equal_weight`. Diff to `run` becomes three lines, `run` drops back to ~163.
 
 > Move this block to `mip/sizing.py` and test it there. It's 55 lines of new numerics with no test, and it can't be tested inside `run`.
 
-The good comments in the same reviews were already this shape:
-
-> `edge_sources.py` is gone -- see C21.
-
-> Call this `duration`. Aliasing it to `bval_dur_bid` gives it a Bloomberg field name it didn't come from.
-
-The first only needs its pointer changed from `C21` to `cohorts.py:110`.
 
 ### Voice
 
-Write for a colleague who wrote the code yesterday and is reading in a hurry.
-Short declarative sentences. Contractions are fine. No sentence fragments unless
-the fragment is the whole comment ("remove", "typo: unsqueezed").
+Impersonal and direct. The comment states what is true about the code, not what
+the reviewer feels about it.
 
-American English, always.
+No `I`, `me`, or `my`. No `we` or `our` speaking for the project -- you have no
+standing to say what the project can afford, what it is moving away from, or what
+it wishes it had done differently. Where a finding turns on a project decision,
+say the decision is needed and stop: "this duplicates `pytensor_ml.optim.base`,
+needs a call on which one wins."
 
-Name code by its identifier. Never substitute a description you coined for a
-name that exists. No figurative verbs for what code does. Code does not walk
-into, reach, bite, sit in a state, or land in a parquet. It calls, reads,
-returns, drops, and raises.
+No humor, no asides, no personality. No praise, no apology, and no commentary on
+the review itself beyond stating where it is incomplete.
 
-Never soften a real consequence with jokey framing, and never hedge a finding you
-verified. If a comment is important enough to post, say it straight.
+Sentence case. Terminal periods optional on fragments. Contractions are fine.
+
+Name code by its identifier, in backticks -- about 40% of comments carry one.
+Never substitute a description you coined for a name that exists. No figurative
+verbs for what code does. Code does not walk into, reach, bite, sit in a state,
+or land in a parquet. It calls, reads, returns, drops, and raises.
+
+American English, and ASCII only. A short comment tempts you into a symbol that
+saves three characters and costs the author a font -- write `sum`, not the sigma
+glyph, and the same for `>=`, `<=`, `!=`, `->`, `x` for multiplication, `alpha`,
+`sigma^2`. Quote a non-ASCII identifier only when that is genuinely its spelling
+in the code. `--` for an em dash, used sparingly.
+
+Never soften a real consequence, and never hedge a finding you verified. If a
+comment is important enough to post, say it straight.
+
 
 ## Phase 7: submit
 
 **Show the full draft and get explicit authorization before posting.** A review
-notifies the author immediately and a `REQUEST_CHANGES` blocks their merge. "Post
+notifies the author immediately and a `REQUEST_CHANGES` blocks their merge. Show
+the teaching comments and the taste comments as their own block, separate from
+the rest, and drop any the user does not clear. "Post
 the review" in the original request is not standing permission -- show the body,
 the comment count, and the event, then wait for a clear go-ahead. This holds even
 when you are confident the draft is right.
