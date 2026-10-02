@@ -12,6 +12,8 @@ Entry points, invoked directly:
 
 - `code-review` -- shippable-or-not verdict and severity; reports only, never edits
   (`--quick` triage, `--deep` paranoid audit)
+- `fresh-review` -- runs `code-review --deep` in a fresh subagent that knows the problem, principles,
+  and scope but not the plan, then saves the brief, review, and triage to the vault
 - `improve-code` -- tiered audit of correctness, design, and style; `--apply` lands the
   behavior-preserving tiers, bugs stay opt-in
 - `improve-tests` -- test quality and coverage as Remove/Improve/Add; `--apply` lands

@@ -8,6 +8,7 @@ set -euo pipefail
 
 ENTRY_POINTS=(
     code-review
+    fresh-review
     improve-code
     improve-tests
     improve-notebook
