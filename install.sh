@@ -20,6 +20,7 @@ ENTRY_POINTS=(
     lazy-review
     humanizer
     audit
+    data-viz
 )
 
 # Linked from config/ to the root of the Claude config directory.
