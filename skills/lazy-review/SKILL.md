@@ -186,25 +186,28 @@ findings is strongest exactly when there is least to report.
 
 ### The body
 
-Two to four sentences of prose. No headings, no bold, no numbered list, and no
-`path:line` references -- the comments carry those, and duplicating them writes
-the review twice.
+The body is the verdict and nothing else. One sentence, usually under ten words.
+All commentary lives in the inline comments.
 
-Lead with the one thing too big to anchor: a base branch that needs retargeting,
-a split, an architecture concern. One item, in prose, with its reasoning. This is
-the only place reasoning belongs. If the ask is a different API shape, sketch it
-in a code block. For a big PR the ask is almost always a split, so give the split
-as a table of PRs with line counts.
+> LGTM, nits inline.
 
-Then the state of the review if it is not complete: which files were covered and
-which were not. A review that silently stops halfway is worse than one that says
-so.
+> Needs changes, see the comment on the `CMD` line.
 
-One sentence on what is working, only if you verified it and only stated as a
-fact -- "the mlx suite passes locally", "the MvNormal factorizations check out
-numerically". Not an assessment of the work or the author.
+> Two blockers inline, the rest are nits.
 
-Everything a comment already carries stays out.
+No summary of what the PR does, no account of what was checked or what passed, no
+statement of what is working, no restatement of any finding. Those read as a
+robot narrating its own review, and the inline comments already carry every
+finding. If the body names a blocker, it names it by its anchor, in a few words,
+so the author knows which thread to open first.
+
+The one exception is an ask that cannot be anchored to a line: a base branch that
+needs retargeting, or a split. Then the body is that ask, stated as the verdict --
+"Retarget onto `perf/a4-lazy-figi-cache`, this re-presents #574." For a split, a
+table of PRs with line counts follows the one sentence. Nothing else joins it.
+
+Review coverage, skipped tests, and unverified claims go to the user in chat and
+to `02_findings.md`. They never go in the body.
 
 ### Each comment
 
@@ -270,10 +273,9 @@ sentence only when the swap does not explain itself.
 ```
 ````
 
-Mark severity explicitly. `nit:` for style, "not a blocker" for a real point that
-should not hold the merge. This is not hedging. It tells the author which of
-thirty comments to argue with, and omitting it makes every comment read as a
-demand.
+Prefix style edits with `nit:`. Mark nothing else: no "not a blocker" label,
+which reads as obsequious. The review event and the one-line verdict carry the
+rest of the severity.
 
 Defer scope out loud when the fix is real but does not belong in this PR: "leave
 for a follow-up PR", "open a TODO", "do it here for this test, new PR for the
@@ -363,7 +365,7 @@ The shapes, from real reviews.
 
 **Deferral:**
 
-> not a blocker, this duplicates `pytensor_ml/optim/base.py`. worth a follow-up to use that instead
+> this duplicates `pytensor_ml/optim/base.py`. worth a follow-up to use that instead
 
 **Pointer to a repeated finding:**
 
