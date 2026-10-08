@@ -156,7 +156,7 @@ So the flow is:
    gh issue create --title "<title>" --label "<label>" --label "<label>" --body-file <file>
    ```
 
-   Write the body to a file and pass `--body-file` so code fences and newlines survive intact.
+   Write the body to a file with the Write tool and pass `--body-file` so code fences and newlines survive intact. Run `gh issue create` (and any later `gh issue edit`) as a Bash call of its own, never chained with `&&`, fed by a heredoc, or inside a loop. Permission allow rules match only single commands, so anything else falls through to the auto mode classifier and gets blocked.
 5. Show the user the returned URL.
 
 Don't append a separate analysis write-up to the issue afterward -- if you learned something useful while reducing the repro, say it in a sentence in chat, not in the ticket.

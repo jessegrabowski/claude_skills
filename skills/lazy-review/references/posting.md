@@ -2,6 +2,14 @@
 
 Read this in Phase 7, after the draft is authorized.
 
+`<skill>` below is `/Users/jesse.grabowski/.claude/skills/lazy-review`. Spell it
+out in full, invoke the script with `python`, and run each command as its own
+Bash call. The permission allow rule matches only that exact prefix. A `cd`, a
+`~`, a `&&` chain, a loop, or a `$(...)` substitution falls through to the auto
+mode classifier, which blocks GitHub writes. The same applies to every `gh`
+read during the review: one `gh pr view` / `gh pr diff` / `gh pr list` per call,
+and `gh api` reads only with `--method GET`, never inside a loop.
+
 ## Validate the anchors first
 
 GitHub only accepts an inline comment on a line inside a diff hunk, and it

@@ -154,7 +154,7 @@ The flow:
    gh pr create --base <base> --title "<title>" --body-file <file>
    ```
 
-   Write the body to a file and pass `--body-file` so newlines and code fences survive. Add `--draft` if the user asked for a draft PR.
+   Write the body to a file with the Write tool and pass `--body-file` so newlines and code fences survive. Add `--draft` if the user asked for a draft PR. Run `git push -u origin <branch>` and `gh pr create` as two separate Bash calls, never chained with `&&` or combined with a heredoc. Permission allow rules match only single commands, so a chain falls through to the auto mode classifier and gets blocked.
 6. Show the returned URL.
 
 Don't post a follow-up comment expanding on the description. If you learned something worth saying while doing the work, say it in chat.
