@@ -49,8 +49,10 @@ last), design (`solid-principles`, `design-pattern-implementation`,
 `testing-implementation`, ...). `skills/audit/SKILL.md` is the full index.
 
 `config/` holds files that link to the root of the Claude config directory rather
-than into `skills/`. Currently that is `CLAUDE.md`, the global preferences every
-session loads. It sits in `config/` rather than at the repo root because a root
+than into `skills/`. That is `CLAUDE.md`, the global preferences every session
+loads, and `bayesian.md`, modeling conventions that the modeling repos pull in with
+an `@~/.claude/bayesian.md` import from their untracked `CLAUDE.local.md`.
+It sits in `config/` rather than at the repo root because a root
 `CLAUDE.md` would *also* load as project instructions whenever you work in this
 repo, applying the same rules twice from two sources.
 

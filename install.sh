@@ -25,6 +25,7 @@ ENTRY_POINTS=(
 # Linked from config/ to the root of the Claude config directory.
 CONFIG_FILES=(
     CLAUDE.md
+    bayesian.md
 )
 
 REPO=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
