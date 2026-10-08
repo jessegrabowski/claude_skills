@@ -14,7 +14,7 @@ $ARGUMENTS
 
 ## Available labels
 
-!`gh label list --json name,description --limit 100`
+!`gh label list --json name,description --limit 100 2>/dev/null || echo "No repo in the working directory. Fetch labels with gh label list --repo OWNER/REPO once the target repo is known."`
 
 ## First, how many problems is this?
 
