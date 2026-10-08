@@ -158,3 +158,7 @@ The flow:
 6. Show the returned URL.
 
 Don't post a follow-up comment expanding on the description. If you learned something worth saying while doing the work, say it in chat.
+
+## Local extensions
+
+!`cat ~/.claude/skills.local/lazy-pr.md 2>/dev/null || true`
