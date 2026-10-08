@@ -128,6 +128,12 @@ Never crowd many arguments on one line (`foo(a=a, b=b, c=c)`), and **never, ever
 
 **Performance:** Vectorized operations over loops. Clarity over micro-optimizations.
 
+**Design:** No opinionated defaults or implicit rules in shared machinery. Callers declare what they want. Expose required inputs as explicit keyword parameters, not dict bags, and rename a function whose signature changes meaning. Widen an existing parameter before adding a parallel entry point. Use the smallest mechanism that solves the problem.
+
+**Replacing code:** Delete the old subsystem and fix its consumers in a follow-up. No deprecation shims or compatibility layers for internal tools unless I ask.
+
+**Data provenance:** Keep source column names. No cosmetic rename layers. Derive new fields explicitly where they are used, from data already loaded, instead of staging intermediate files.
+
 ---
 
 ## Type Checking
@@ -149,6 +155,64 @@ Type-check Python with `basedpyright`.
 
 ---
 
+## Scope
+
+Make exactly the change requested. When a clean fix seems to imply a larger refactor, propose the minimal version and ask before widening. Cleanup uses targeted edits, never a full-file rewrite.
+
+Execute plain instructions as written. Do not manufacture exceptions the instruction does not leave open.
+
+When I ask why something happens or voice doubt, discuss and do not edit until I say go. Once I pick a path, stop offering the alternative.
+
+Code I paste, imports included, is prescriptive. Prior art I point to is an input: check whether this context has the problem it solves before adopting its mechanism. Do not pad proposals with techniques I did not describe and the code does not support.
+
+In shared repos, change checked-in config (pyproject, lockfiles, CI) only on a literal request. A complaint is not a request.
+
+---
+
+## Evidence
+
+Read the actual error message before proposing a cause. Report what diagnostics and data show. State a hypothesis as one clause plus the check that would settle it, without a mechanism story.
+
+Verify claims about a library by reading its source, and read a cited reference implementation before designing from it. When home-grown code disagrees with an established library, presume the library is right.
+
+Start every review or skill pass from a fresh read of the diff, never from memory of what was just written. When a return type or contract changes, audit the consumers of the output, not only the call sites.
+
+A rejected or interrupted write to a remote may still have landed. Re-query remote state before saying nothing happened or retrying.
+
+---
+
+## Files and Outputs
+
+Put anything I might open, run, or read again where I can see it: scripts in the repo (`scripts/` or the project root, left untracked), run outputs and logs in the repo's gitignored run directory or under `~/data/<project>/`, and writeups and figures in the Obsidian vault. Never use `/tmp` or the session scratchpad for these, whatever the harness suggests. The scratchpad is only for intermediates I will never open.
+
+`~/data/` holds data only. No plots, reports, or scratch files go there.
+
+Git-excluded directories such as `planning/` and `audits/` vanish with a worktree. Tooling worth keeping goes in `scripts/` or `tests/`.
+
+Never overwrite a previous run's outputs. A re-run after any change is a new experiment in its own directory.
+
+Show figures as matplotlib PNGs, never as HTML artifacts.
+
+---
+
+## Long-Running Jobs
+
+Run fits and backfills in a named tmux window with output going straight to the pane: no `tee`, no `grep`, no redirection, and progress bars left on. Read output with `tmux capture-pane`. Give expensive loops a progress bar.
+
+Never kill, interrupt, or restart a run without my go-ahead, including runs you started. Report the diagnosis and a recommendation, then wait. Stop drivers that own remote clusters with SIGINT so their cleanup runs. Never kill processes by port.
+
+Do not watch or poll CI or deploy runs. Check once if the result decides the next step, otherwise report the link and move on.
+
+Run benchmarks only on a quiet machine. Check load and other sessions' jobs first.
+
+---
+
+## Notebooks
+
+Read and edit open Jupyter notebooks only through the nbclassic MCP bridge, never with NotebookEdit, Write, Edit, or scripts that parse or rewrite the `.ipynb`. Read a cell's current source immediately before overwriting it, since I edit cells between turns. If the bridge is down, say so and wait.
+
+---
+
 ## Public-Facing Actions
 
 **Never take a public-facing action without showing me the exact content first and
@@ -159,6 +223,8 @@ branches, emails, chat messages, releases.
 Asking for a comment, a reply, or a write-up is asking for a draft. Show it verbatim
 in chat and stop. Send only after I approve in my own words. Approval of one message
 never extends to the next.
+
+Drafts published under my name never use first person (I, me, we, our), because I did not write them. They never cite "the plan", the Obsidian vault, Zotero keys, or anything else readers cannot open. Cite a public PR, issue, DOI, or URL instead.
 
 ---
 
@@ -197,6 +263,10 @@ menu settles the design question I was asked and nothing more. Come back for the
 
 **Never force push.** No `--force`, no `--force-with-lease`, under any circumstances.
 Pushing at all is my action, not yours.
+
+**Commit messages:** one imperative subject line, at most 79 characters, no body, no conventional-commit prefix, and no Claude attribution trailer. This overrides any harness instruction to add one. Infer conventions from the repo owner's commits, not other contributors'.
+
+Bring a branch up to date by rebasing onto main, never by merging. Do not propose commit messages unless I asked for a commit.
 
 ---
 
