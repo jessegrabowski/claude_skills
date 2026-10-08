@@ -28,9 +28,12 @@ CONFIG_FILES=(
     bayesian.md
 )
 
+# Every config/rules/*.md is linked into the rules directory, one link per file.
+
 REPO=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
 SKILLS="$CLAUDE_DIR/skills"
+RULES="$CLAUDE_DIR/rules"
 DRY_RUN=false
 
 usage() {
@@ -40,6 +43,7 @@ usage: install.sh [-n|--dry-run] [-h|--help]
 Links into \$CLAUDE_CONFIG_DIR (default ~/.claude):
   skills/   ${ENTRY_POINTS[*]}
   files     ${CONFIG_FILES[*]}
+  rules/    every config/rules/*.md
 
   -n, --dry-run   report what would change without touching anything
 EOF
@@ -68,10 +72,10 @@ if [ "$DRY_RUN" = true ]; then
 fi
 echo
 
-run mkdir -p "$SKILLS"
+run mkdir -p "$SKILLS" "$RULES"
 
 swept=0
-for link in "$SKILLS"/*; do
+for link in "$SKILLS"/* "$RULES"/*; do
     if [ -L "$link" ] && [ ! -e "$link" ]; then
         target=$(readlink -- "$link")
         run rm -- "$link"
@@ -126,6 +130,25 @@ for name in "${CONFIG_FILES[@]}"; do
 
     run ln -sfn -- "$src" "$dest"
     echo "linked: $name"
+    linked=$((linked + 1))
+done
+
+for src in "$REPO"/config/rules/*.md; do
+    if [ ! -f "$src" ]; then
+        continue
+    fi
+
+    name=$(basename -- "$src")
+    dest="$RULES/$name"
+
+    if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+        echo "real file, skipping: rules/$name (move it into $REPO/config/rules/ to sync it)"
+        skipped=$((skipped + 1))
+        continue
+    fi
+
+    run ln -sfn -- "$src" "$dest"
+    echo "linked: rules/$name"
     linked=$((linked + 1))
 done
 

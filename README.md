@@ -52,7 +52,10 @@ last), design (`solid-principles`, `design-pattern-implementation`,
 than into `skills/`. That is `CLAUDE.md`, the global preferences every session
 loads, and `bayesian.md`, modeling conventions that the modeling repos pull in with
 an `@~/.claude/bayesian.md` import from their untracked `CLAUDE.local.md`.
-It sits in `config/` rather than at the repo root because a root
+
+`config/rules/` holds path-scoped rules, each linked into `~/.claude/rules/`. A rule
+with `paths:` frontmatter loads only after Claude reads a matching file, so
+Python-only and test-only conventions stay out of sessions that never touch them. It sits in `config/` rather than at the repo root because a root
 `CLAUDE.md` would *also* load as project instructions whenever you work in this
 repo, applying the same rules twice from two sources.
 
