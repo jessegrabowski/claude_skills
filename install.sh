@@ -12,6 +12,7 @@ ENTRY_POINTS=(
     improve-code
     improve-tests
     improve-notebook
+    when-in-rome
     plan-scaffold
     ipm-prep
     split-and-commit

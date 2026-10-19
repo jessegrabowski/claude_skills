@@ -18,6 +18,9 @@ Entry points, invoked directly:
   behavior-preserving tiers, bugs stay opt-in
 - `improve-tests` -- test quality and coverage as Remove/Improve/Add; `--apply` lands
   Improve and Add, deletions stay opt-in
+- `when-in-rome` -- derives the codebase's own idioms from two or more peer files, then
+  reports where the scoped files depart from them as Reinvention/Deviation/Tension;
+  `--like` names the exemplars, `--apply` lands all but Tension
 - `improve-notebook` -- notebook reproducibility, cell granularity, figures, and prose;
   stacks `improve-code --apply` over the cell contents, always applies, and reports the
   joint pass; only re-run-the-world fixes stay proposals
