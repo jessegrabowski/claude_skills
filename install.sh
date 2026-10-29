@@ -15,6 +15,7 @@ ENTRY_POINTS=(
     when-in-rome
     plan-scaffold
     ipm-prep
+    clean-archive
     split-and-commit
     lazy-issue
     lazy-pr

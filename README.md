@@ -27,6 +27,8 @@ Entry points, invoked directly:
 - `plan-scaffold` -- scaffold a step/PR/commit implementation plan in the Obsidian vault
 - `ipm-prep` -- assemble the iteration-planning brief from two weeks of GitHub activity into
   a vault note folder that exports as one PDF
+- `clean-archive` -- move finished reviews, plans, and old IPM briefs into the vault archive,
+  checked against GitHub PR state; plan changes wait for one approval
 - `split-and-commit` -- break working changes into logical commits
 - `lazy-issue` / `lazy-pr` -- file a GitHub issue or open a PR
 - `humanizer` -- rewrite prose to remove AI tells (vendored from
