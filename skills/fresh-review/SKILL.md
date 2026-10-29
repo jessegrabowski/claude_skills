@@ -73,6 +73,8 @@ Write the review folder to
 
 `<review-root>` is the same machine-local root `lazy-review` uses. Take it from `CLAUDE.local.md`; if it isn't set there, ask once. `<pr-or-branch>` is the PR number when there is one, otherwise the branch name with `/` replaced by `-`. Use the runtime's current date. If the folder exists, append `_2`, `_3`, and so on. Never overwrite an earlier review.
 
+Before writing, archive the repo's finished reviews exactly as `lazy-review` does in `../lazy-review/references/artifacts.md` ("Archiving older reviews"): every folder in `<review-root>/<repo>/` whose PR is merged or closed moves to `<review-archive>/<repo>/`, and folders with an open PR or no PR stay.
+
 ```
 00_brief.md    the exact brief sent to the reviewer, plus repo, base, head SHA, depth
 01_review.md   the reviewer's output, verbatim

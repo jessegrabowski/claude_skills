@@ -20,6 +20,23 @@ there, ask once and use the answer for the rest of the session. Use the
 Never leave these in the repo, in `/tmp`, or in a scratchpad. The user will not
 find them there.
 
+## Archiving older reviews
+
+Before writing the new folder, move the repo's finished reviews out of the way.
+Every folder already in `<review-root>/<repo>/` belongs to a PR: the number in
+`PR_Review_<num>_...` or `Fresh_Review_<num>_...`, or, for
+`Fresh_Review_<branch>_...`, the PR opened from the branch its `00_brief.md`
+names. Look each one up with a single command, `gh pr view <num> --repo
+<owner/name> --json state` or `gh pr list --repo <owner/name> --head <branch>
+--state all --json number,state`. Move every folder whose PR is `MERGED` or
+`CLOSED` to `<review-archive>/<repo>/`, and never overwrite a folder already
+there. Leave a folder in place when its PR is open or when no PR exists.
+
+`<review-archive>` is machine-local, set next to `<review-root>` in
+`CLAUDE.local.md`. If it isn't set, skip this step and say so. Wikilinks into a
+moved folder keep resolving, because Obsidian matches `Reviews/<repo>/...`
+against the end of the full path. Report what moved in one line.
+
 `03_review_payload.md` is the file `review_payload.py` reads, so its shape is
 fixed: the review body in a blockquote under `## Review body`, then a table of
 inline comments whose rows look like
