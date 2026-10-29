@@ -23,6 +23,7 @@ ENTRY_POINTS=(
     humanizer
     audit
     data-viz
+    bayesflow
 )
 
 # Linked from config/ to the root of the Claude config directory.
