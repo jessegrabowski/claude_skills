@@ -97,9 +97,9 @@ This skill formats an *approved* plan; it does not invent one. When invoked with
 
 ### 1. Locate the vault and name the plan
 
-The plan folder goes at `<vault>/<project>/<plan-name>/`. Find the vault by looking for a `.obsidian` directory (commonly under `~/Documents/`); if there's genuine ambiguity or none is found, ask rather than guessing -- writing a plan into the wrong tree is worse than a question.
+The plan folder goes at `<vault>/Projects/<project>/<plan-name>/`. Find the vault by looking for a `.obsidian` directory (commonly under `~/Documents/`); if there's genuine ambiguity or none is found, ask rather than guessing -- writing a plan into the wrong tree is worse than a question.
 
-`<project>` is the repo or project name, and reusing an existing project folder is the point: if `<vault>/<project>/` already exists, read its `README.md` first. It records what has already been investigated here, and the plan should build on that rather than rediscover it.
+`<project>` is the repo or project name, and reusing an existing project folder is the point: if `<vault>/Projects/<project>/` already exists, read its `README.md` first. It records what has already been investigated here, and the plan should build on that rather than rediscover it.
 
 `<plan-name>` is a short kebab-case slug for *this* transformation -- `refactor`, `hsgp-rewrite`, `polars-migration`, `multi-country-support`. Fix obvious typos, confirming if ambiguous. **If that folder already exists, stop and ask** whether this is a continuation or a genuinely new plan; never overwrite one.
 
@@ -127,14 +127,14 @@ Flag any step you think is under-specified or risky rather than papering over it
 ### 4. Write the folder
 
 ```
-<vault>/<project>/<plan-name>/
+<vault>/Projects/<project>/<plan-name>/
 ├── OVERVIEW.md          master plan, links to every step
 ├── step-01-<slug>.md
 ├── step-02-<slug>.md
 └── ...
 ```
 
-Use the templates in `references/templates.md` -- read that file before writing. Then update `<vault>/<project>/README.md` with a section linking the new plan, creating the README if the project folder is new.
+Use the templates in `references/templates.md` -- read that file before writing. Then update `<vault>/Projects/<project>/README.md` with a section linking the new plan, creating the README if the project folder is new.
 
 Before finishing, re-read the actual files and check the wrapping rule held. Hard-wrapping is a strong habit and tends to creep back in around the middle of a long document, so verify against the files rather than from memory.
 
@@ -163,3 +163,11 @@ This table is what a reader checks progress against, so it has to be honest abou
 A commit is checked only when its tests pass and the full suite stays green. PR-level lines carry `reviewed` and `merged` alongside their verification check, so those attach to a specific PR rather than to the step as a whole.
 
 Estimating commit counts precisely for distant steps isn't possible, and pretending otherwise makes the table a lie. For steps beyond the near horizon, write the rows you can defend and add an explicit note that the step gets expanded when it's reached.
+
+## Archiving
+
+A plan ends when every PR it calls for is merged, or when the user drops or replaces it. Confirm the PR states with `gh`, because the checkboxes go stale, and archive only once the user agrees the plan is over. Set `status:` in `OVERVIEW.md` to `done`, `abandoned`, or `superseded`, with a one-line reason for the last two. Then move the folder to `<vault>/Archive/`, keeping its path below the vault root, so `<vault>/Projects/<project>/<plan-name>/` becomes `<vault>/Archive/Projects/<project>/<plan-name>/`. In `<vault>/Projects/<project>/README.md`, move the plan's line under an `## Archived` heading.
+
+Links of the form `[[<plan-name>/OVERVIEW]]` keep resolving after the move, because Obsidian matches a partial path against the end of the full one. Links written from the vault root (`[[Projects/<project>/<plan-name>/...]]`) break, so grep the vault for them and prefix `Archive/`.
+
+Archived plans are still prior attempts. When step 1 or step 2 looks for an earlier plan, search `<vault>/Archive/Projects/<project>/` as well.
