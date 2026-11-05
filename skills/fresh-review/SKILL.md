@@ -21,15 +21,17 @@ Turn the scope into something the reviewer can act on without this conversation:
 
 ## 2. Write the brief
 
-The brief has exactly three parts.
+The brief has exactly four parts.
 
 **Problem.** Two to five sentences on what the change is for: the behavior or capability that is missing or broken without it, and who or what depends on it. Describe the goal, never the solution. "Bond prices from the surrogate drift from the full model above 30y maturity" is a problem. "We added a maturity-bucketed correction" is a solution and stays out.
 
 **Principles.** What the code is held to. Start from the defaults: maintainability, readability, extensibility, simplicity over cleverness, and tests that pin behavior. Then add the repo's own. Read the project `CLAUDE.md` (and any `CLAUDE.md` in the directories the change touches), pull the rules that bear on review -- architecture boundaries, naming, error handling, testing conventions, performance constraints -- and quote them with their file path. Point the reviewer at `~/.claude/CLAUDE.md` for the user's general code style. Include a principle stated in this conversation only if it would hold for any change to this repo. A principle invented to justify this particular change is a decision in disguise.
 
-**Scope.** The target from step 1, the file list, and what to skip.
+**Scope.** The target from step 1, the file list, and what to skip. Also state, as bare facts, what is deliberately outside this change: work staged for a later PR, rollout steps that ship separately (a table migration, a lockstep release in a consuming repo), and directives the user gave that any implementation must meet ("the fix is the default, frozen numbers may move"). State them as constraints, never with the reasoning behind them. In past reviews about 90 findings re-raised exactly these, which the reviewer could not have known.
 
-**What never goes in the brief:** the plan, the alternatives tried or rejected, the reasons behind design choices, earlier review rounds, known weaknesses the user has accepted, or any claim that the code is correct, tested, or finished. Each of these tells the reviewer what to conclude, and a reviewer told why a choice was made will check the reasoning instead of the code. If a reviewer raises something already decided, that is information. The triage step handles it.
+**How to run things.** The exact command for the test suite and for running code in the project's environment (`pixi run test`, `pixi run --frozen python`, `uv run --frozen pytest`), and the instruction that nothing else creates or modifies an environment or a lockfile. Without this, reviewers have reported "tests fail to collect" from the wrong interpreter, rewritten `pixi.lock`, and left a stray `.venv/` in the repo. Name any test that covers this code from outside the diff, because "no test covers X" was the commonest wrong finding.
+
+**What never goes in the brief:** the plan, the alternatives tried or rejected, the reasons behind design choices, earlier review rounds, known weaknesses the user has accepted, or any claim that the code is correct, tested, or finished. Each of these tells the reviewer what to conclude, and a reviewer told why a choice was made will check the reasoning instead of the code. The scope boundaries and directives above are facts about what is being built, so they go in, but the reasons behind them stay out: "there is no opt-out option" is a fact, and "the option is dropped because ..." is a decision in disguise. If a reviewer raises something already decided, that is information. The triage step handles it.
 
 If you cannot state the problem or the repo-specific principles from the conversation and the repo, ask the user before going further. Otherwise print the brief in chat and continue without waiting. It is saved in the vault, so it can be checked afterwards.
 
@@ -44,7 +46,7 @@ Run the code-review skill on this scope by calling the Skill tool:
   Skill(skill="code-review", args="<depth> <scope>")
 Do not write a review of your own instead, and do not summarize or reformat the skill's output. If the Skill tool is unavailable or the skill fails to load, stop and report that as your entire answer.
 
-This review is read-only. Do not edit files, run git commands that write, or comment on any PR.
+This review is read-only. Do not edit files, run git commands that write, or comment on any PR. Run tests and code only with the commands the brief names, and never create, install into, or lock an environment.
 
 Your final message must contain exactly two things, in order:
 1. The line "code-review invoked: <the args you passed>".
@@ -60,8 +62,9 @@ Give the user the review first, unfiltered: verdict, severity, and every blocker
 - **new** -- not considered before; worth acting on.
 - **already decided** -- re-raises a choice made in this conversation. Name the decision and the reason it was made, and say whether the finding changes the case for it.
 - **wrong** -- the reviewer misread the code. Cite the `file:line` that shows it.
+- **bikeshed** -- a finding that rests on the reviewer's own idea of good practice rather than on a failure or on the user's standards: hardening or rigor the code's purpose does not call for (report scripts, one-off tooling), abstraction or deduplication where the repo duplicates on purpose, guards for states no caller produces, or a preference between equivalent options that no stated rule decides. A finding against the user's stated conventions is never a bikeshed, however small. The user filters bikesheds out almost every time a review comes back, so mark them here and leave them out of any fix list.
 
-Never drop a finding because it conflicts with the plan. A finding marked already decided stays in the review, and the user decides whether the decision holds.
+Never drop a finding because it conflicts with the plan. When asked to apply the fixes, apply the new ones in order of severity and skip the bikesheds without asking. A finding marked already decided stays in the review, and the user decides whether the decision holds.
 
 ## 5. Save to the vault
 
