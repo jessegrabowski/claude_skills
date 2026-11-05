@@ -270,14 +270,16 @@ findings is strongest exactly when there is least to report.
 
 ### The body
 
-The body is the verdict and nothing else. One sentence, usually under ten words.
+The body is the verdict and nothing else, and the default is no body at all. The
+user's stated prior is "0-3 words, with 0 heavily oversampled". An approval with
+nits inline needs no body, because the event already says it. A request for
+changes gets a few words in the user's register when it gets any:
+
+> Needs a few fixes then ready to merge
+
+> merge when you feel like it
+
 All commentary lives in the inline comments.
-
-> LGTM, nits inline.
-
-> Needs changes, see the comment on the `CMD` line.
-
-> Two blockers inline, the rest are nits.
 
 No summary of what the PR does, no account of what was checked or what passed, no
 statement of what is working, no restatement of any finding. Those read as a
@@ -532,8 +534,18 @@ basename somewhere in the notes and copied forward; anchors are repo-relative.
 ## Choosing the event
 
 `REQUEST_CHANGES` when a confirmed finding changes numbers, loses data, or breaks
-a caller. `COMMENT` when the findings are shape and conventions -- real work, but
-nothing that makes the PR wrong. `APPROVE` is not this skill's job; if the PR is
-fine, say so in chat.
+a caller.
+
+`APPROVE`, with no body, when the findings are shape, conventions and nits, or
+when there are none. The author fixes those before merging without a second
+round, and the user overrode a drafted `COMMENT` to this about thirty times. A
+`COMMENT` review leaves the PR in limbo and the user has to come back to it.
+
+`COMMENT` only when the review cannot decide without an answer from the author,
+such as an open question about intent that would turn into a blocker if answered
+one way. Say in the draft which answer flips it.
+
+Put the event in the payload's `Event:` line. It is a proposal like the rest of
+the draft.
 
 Never review your own PR -- GitHub rejects it. Check the author first.
