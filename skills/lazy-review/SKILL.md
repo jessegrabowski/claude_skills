@@ -53,12 +53,53 @@ and attribute them to the wrong author. When you find it, the real diff is
 the first thing you ask for.
 
 List the open PRs (`gh pr list --state open`) and test the plausible ancestors.
-This costs one command and is the highest-value thing in the whole skill.
+This costs one command and is the highest-value thing in the whole skill. When
+several PRs in a stack are up for review, review them bottom-up, and attribute
+each finding to the PR whose diff introduced the line, not to the tip that shows
+it.
+
+Then look for earlier rounds: any `PR_Review_<n>_*` or `Fresh_Review_<n>_*` folder
+for this PR under the review root and the review archive, and the user's own
+earlier reviews on the PR (`gh api --method GET repos/<o>/<r>/pulls/<n>/reviews`).
+When one exists, this is a re-review, and it runs as described under "Re-reviews"
+below.
+
+Then check what the base branch has done since the PR branched off. List the
+commits on `origin/<base>` since the merge-base that touch the PR's files
+(`git log --oneline $(git merge-base origin/<base> <head>)..origin/<base> -- $(git diff --name-only origin/<base>...<head>)`)
+and record them in `00_scope.md`. For each one, ask whether the PR's version of
+the code undoes it or conflicts with it. A PR that still carries a value or a
+code path the base has since replaced will revert that change when the merge is
+resolved in the branch's favor, and nothing in the PR's own diff shows it. A
+revert is a Tier 1 finding, and the remedy is a rebase onto the base.
 
 Then record the numbers that matter: real files changed, real insertions, bytes
 added to the repo (`git diff --name-only <base>..HEAD | while read f; do [ -f "$f" ] && stat -f%z "$f"; done`),
-and the commit log with authors. Large binary or generated files hiding in a diff
-are a finding on their own.
+and the commit log with authors. Commit subjects and authorship are context for
+attribution and stacking, and stay in `00_scope.md`. They never became a posted
+comment in the reviews this skill learned from, so do not draft them. Large binary or generated files hiding in a diff
+are a finding on their own. So is any file that should not be checked in at all:
+agent skill files, one-off scripts and notebooks, local config, outputs. Read
+every change to a dependency pin or lockfile and ask whether it belongs in this PR
+and whether its range matches the other places the same package is pinned.
+
+### Re-reviews
+
+A second round reviews what changed and what the first round asked for. Read the
+earlier round's `02_findings.md` and payload, and the threads on the PR. For each
+earlier comment, check the code at the new head: an author reply that says "done"
+is a claim, and some of those claims turn out false. A thread whose fix was not
+made gets a reply in that thread, not a new comment.
+
+New comments in a re-review are limited to blockers, regressions the fixes
+introduced, and earlier findings that turned out wrong. The first round's nits
+and taste do not come back in new words. In the reviews this skill learned from,
+second-round drafts of 8, 15 and 16 comments were posted as 4, 3 and 1.
+
+When this round's remedy differs from the one the first round asked for, say so
+in the comment ("reverses the earlier ask for `None`: drop the option instead").
+An author who followed round one's advice and is told the opposite with no
+acknowledgment loses trust in every other comment.
 
 ## Phase 1: plan, and get sign-off
 
