@@ -144,7 +144,17 @@ Ask each agent for the things you cannot cheaply get yourself:
 - Data sources: repeatable and queryable, or frozen fixtures with hardcoded paths
 - Whether new code reuses the real machinery or reimplements it locally
 - For modified files: whether a change alters behavior for existing callers, with
-  the callers grepped and named
+  the callers grepped and named. Callers include the repos that consume this one
+  in production, not only callers inside the diff's own repo
+- For a new option, flag or mode: whether it should exist at all. A fix shipped
+  behind a default-off flag, or a `"refuse"`/`"warn"` switch over a single
+  correct behavior, leaves two code paths where one is right. The user has asked
+  for "make the fix the default" on more PRs than any other single request
+- For code that reads data over time (backtests, panels, history frames, rolling
+  windows): whether every value used at date t was knowable at date t, and
+  whether the universe at t is the universe that existed then. Look-ahead and
+  survivorship read as plausible code and were missed by every pass that was not
+  asked about them directly
 
 Two rules. Agents locate and report; they do not review -- the judgment is yours.
 And when an agent reports something load-bearing that it flags as unverified,
