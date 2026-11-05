@@ -501,12 +501,23 @@ explain something wrong at length, or explain something the author already knows
 Default to the short form and offer the long one beside it.
 
 **Taste.** A finding whose whole content is that a name, a layout, or an API shape
-is worse than an alternative, with no failure behind it. State it impersonally and
-concretely -- "`unc` is too abbreviated, `unconstrained`" -- and group these
-together when you show the draft. Some are worth posting and some are the model
-inventing an opinion, and only the user can tell which.
+is worse than an alternative, with no failure behind it and no rule in
+`00_rules.md` behind it. A finding a rule covers is a convention finding, not taste.
+State it impersonally and concretely -- "`unc` is too abbreviated,
+`unconstrained`" -- and group these together when you show the draft.
 
-Everything else follows the normal Phase 7 authorization.
+Screen each taste item before holding it. Drop it when it rests on the review's
+own idea of good practice rather than on a failure or on the user's standards:
+rigor the code's purpose does not call for (report scripts, one-off tooling),
+abstraction or deduplication where the repo duplicates on purpose, a guard for a
+state no caller produces, or a choice between equivalent options that no stated
+rule decides. Every taste comment the user cut in past reviews had one of those
+shapes, and the user cleared the rest about twice as often as cutting them. So
+show the survivors as posting unless cut: the user strikes the ones that go, and
+silence is clearance.
+
+Teaching comments still need an explicit yes. Everything else follows the normal
+Phase 7 authorization.
 
 
 ### Examples
@@ -601,7 +612,9 @@ comment is important enough to post, say it straight.
 **Show the full draft and get explicit authorization before posting.** A review
 notifies the author immediately and a `REQUEST_CHANGES` blocks their merge. Show
 the teaching comments and the taste comments as their own block, separate from
-the rest, and drop any the user does not clear. "Post
+the rest. On the go-ahead, move every taste comment the user did not strike and
+every teaching comment the user cleared into the inline-comments table, and drop
+the others. "Post
 the review" in the original request is not standing permission -- show the body,
 the comment count, and the event, then wait for a clear go-ahead. This holds even
 when you are confident the draft is right.
