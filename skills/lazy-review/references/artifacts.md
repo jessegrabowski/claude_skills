@@ -17,7 +17,7 @@ there, ask once and use the answer for the rest of the session. Use the
                       convention_check.py leads kept or dropped
 02_findings.md        Phase 4 + 5 -- consolidated findings, severity, confidence, and the
                       rule coverage table
-03_review_payload.md  Phase 6 -- the review body and the anchor table
+03_review_payload.md  Phase 6 -- the event, the review body and the anchor table
 04_pass_<name>.md     Phase 4 -- one report per pass, opening with how it was invoked, the
                       files covered, and confirmation that 00_rules.md was applied
 ```
@@ -43,12 +43,35 @@ moved folder keep resolving, because Obsidian matches `Reviews/<repo>/...`
 against the end of the full path. Report what moved in one line.
 
 `03_review_payload.md` is the file `review_payload.py` reads, so its shape is
-fixed: the review body in a blockquote under `## Review body`, then a table of
-inline comments whose rows look like
+fixed:
 
 ```
+Event: APPROVE
+
+## Review body
+
+> one line, or nothing
+
+---
+
+## Inline comments
+
+| id | path | line | comment |
+|---|---|---|---|
 | C01 | `path/to/file.py` | 581 | what to do ... |
+
+## Held for clearance
+
+| H01 | `path/to/file.py` | 90 | taste comment awaiting the user ... |
 ```
+
+Only rows under `## Inline comments` are posted. Held comments take `H` ids and
+live in their own section. When the user clears one, move it into the
+inline-comments table with the next `C` id. Ids run without gaps, and every
+finding in `02_findings.md` ends with a disposition: the `C` or `H` id it became,
+or `dropped` with a reason. A finding that disappears between the findings note
+and the payload with no disposition is a bookkeeping failure, and a blocker
+dropped that way leaves the event arguing for a change nobody asked for.
 
 The path is repo-relative, exactly as GitHub spells it in the diff --
 `src/pkg/pkg/data_utils.py`, never the bare `data_utils.py`. Findings notes tend

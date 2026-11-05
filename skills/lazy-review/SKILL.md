@@ -522,8 +522,11 @@ when you are confident the draft is right.
 
 Anchors must be validated before posting, and a 502 from this endpoint does not
 mean the review failed -- retrying blind double-posts every comment. Both are
-handled by `scripts/review_payload.py`; `references/posting.md` has the commands
-and the two traps. The commonest validation failure is a path shortened to its
+handled by `scripts/review_payload.py`, which also takes the event and the body
+from the payload and splits large reviews into chunks; `references/posting.md`
+has the commands and the traps. When the user changes the event, the body or the
+set of comments at post time, edit the payload and post it, so the note records
+what went out. The commonest validation failure is a path shortened to its
 basename somewhere in the notes and copied forward; anchors are repo-relative.
 
 ## Choosing the event

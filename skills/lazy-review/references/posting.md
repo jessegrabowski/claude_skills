@@ -28,11 +28,27 @@ symbol and use its real line.
 
 ```bash
 python <skill>/scripts/review_payload.py post \
-  --payload <vault>/03_review_payload.md --repo <owner/name> --pr <n> \
-  --event REQUEST_CHANGES
+  --payload <vault>/03_review_payload.md --repo <owner/name> --pr <n>
 ```
 
-Two things the script handles that are easy to get wrong by hand.
+The event is the payload's `Event:` line, and the body is its blockquote, which
+may be empty when the event is `APPROVE`. When the user changes either at post
+time, edit the payload and post it. Never fall back to a raw `gh api` call to
+get an empty body or a different event, because the note then stops matching
+what was posted.
+
+Only rows under `## Inline comments` are posted. The script names any `C` row it
+found elsewhere in the note, so a held comment the user cleared has to be moved
+into that section first.
+
+Three things the script handles that are easy to get wrong by hand.
+
+**Large reviews go up in chunks.** More than 30 comments in one request trips
+GitHub's secondary rate limit. Above that size the script opens a pending review
+with the first 30, attaches the rest one at a time, and submits at the end. If it
+stops partway, the pending review stays on the PR, invisible to the author, and
+running `post` again resumes it without duplicating a comment. Wait out a rate
+limit before rerunning. Never split a payload by hand into several reviews.
 
 **A 502 does not mean the review failed.** This endpoint returns server errors
 after successfully creating the review. Never retry blind -- a retry double-posts
