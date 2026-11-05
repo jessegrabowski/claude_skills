@@ -80,3 +80,25 @@ into the payload makes every anchor on that file invalid. Take the path from the
 diff, not from the prose around the finding.
 
 What you validate is what you post, so edit the payload rather than the API call.
+
+## The findings note
+
+`02_findings.md` uses the same headings every time, so rounds and PRs can be
+compared:
+
+```
+## Tier 1: changes numbers
+## Tier 2: blocks a fix
+## Tier 3: shape
+## Tier 4: conventions
+## Held for clearance
+## Dropped
+## Not verified
+## Coverage
+```
+
+A tier with nothing in it says "None." under its heading. Each finding opens with
+`confirmed` or `suspected` and closes with its disposition. `## Dropped` lists
+each dropped finding with the reason in one clause. `## Not verified` holds what
+the review could not check, such as production numbers, suites that could not run
+and downstream repos not read, and `## Coverage` is the rule coverage table.
