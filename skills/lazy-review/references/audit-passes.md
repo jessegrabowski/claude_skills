@@ -22,6 +22,11 @@ research or analysis PR those two usually find more than the security passes do.
 
 Say what you are *not* running, and why.
 
+Every `audit:*` pass is marked `disable-model-invocation: true`, so the Skill tool
+refuses it. Say so in the plan. Once the user approves one, its agent reads
+`/Users/jesse.grabowski/.claude/skills/audit/skills/<name>/SKILL.md` and follows it
+in full. Each approved pass, audit or skill, gets its own agent (SKILL.md, Phase 4).
+
 Each pass's report is a working artifact. It goes in the review folder, never in
 the review -- these reports run far longer than anything the author should
 receive. The review is the distillation.

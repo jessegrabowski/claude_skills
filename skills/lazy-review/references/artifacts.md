@@ -12,9 +12,14 @@ there, ask once and use the answer for the rest of the session. Use the
 
 ```
 00_scope.md           Phase 0 -- real diff, base-branch finding, size, commit hygiene
-01_inventory.md       Phase 2 + 3 -- what was added, mechanical results, agent findings
-02_findings.md        Phase 4 + 5 -- consolidated findings, severity, confidence
+00_rules.md           Phase 1 -- numbered convention checklist, each rule with its source
+01_inventory.md       Phase 2 + 3 -- what was added, mechanical results, agent findings,
+                      convention_check.py leads kept or dropped
+02_findings.md        Phase 4 + 5 -- consolidated findings, severity, confidence, and the
+                      rule coverage table
 03_review_payload.md  Phase 6 -- the review body and the anchor table
+04_pass_<name>.md     Phase 4 -- one report per pass, opening with how it was invoked, the
+                      files covered, and confirmation that 00_rules.md was applied
 ```
 
 Never leave these in the repo, in `/tmp`, or in a scratchpad. The user will not

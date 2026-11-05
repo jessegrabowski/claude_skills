@@ -70,7 +70,25 @@ The point of the plan is that the user knows things you cannot see: which files
 are production-adjacent, whose work is genuinely new, what they already distrust.
 Two minutes of their input reshapes the next hour.
 
-Read `references/audit-passes.md` for which passes fit what you found.
+Read `references/audit-passes.md` for which passes fit what you found. The plan
+names every pass whose `SKILL.md` carries `disable-model-invocation: true`, because
+those cannot be loaded with the Skill tool and run only as Phase 4 describes.
+
+### The rules file
+
+Before the plan, write `00_rules.md` into the review folder: the conventions this
+review holds the diff to, as a numbered checklist with the source of each rule.
+Collect it from every place the user's standards live, not only from files checked
+into the repo:
+
+- the global and project `CLAUDE.md`, `CLAUDE.local.md`, and every file they import
+- the auto-memory `feedback_*.md` notes for the repo under review (its `MEMORY.md`
+  index names them), which hold most of the docstring, test-layout and comment rules
+- the repo's own `README`, contributor docs, and linter config
+
+The user's conventions are the standard for the review. A rule that lives only in
+memory or `CLAUDE.md` is a stated rule, and a finding against it is a convention
+finding like any other. Never drop one because the repo does not write it down.
 
 ## Phase 2: explore in parallel
 
@@ -94,6 +112,21 @@ might" becomes your "confirmed" only after you have read the chain.
 
 While they run, do the mechanical work in Phase 3 rather than waiting.
 
+### Briefing any agent
+
+Every brief, for an explore agent or a Phase 4 pass agent, carries the real scope,
+the path to `00_rules.md`, the questions, and how to read the code at the head ref
+without a checkout. It never carries findings so far, a list of "already known"
+items, or a hypothesis. An agent handed a list of answers searches only outside
+that list and comes back agreeing with it. Merge and deduplicate after the agents
+report, not before they start.
+
+A code-search index covers a local checkout, not the PR's head
+ref. It is good for finding where a symbol lives and who calls it in the code
+around the diff, but the PR's own version of a file is read from the head ref
+(`git show <head>:<path>`). Say this in the brief, so an agent neither trusts an
+index that predates the PR nor skips the index entirely because it does.
+
 ## Phase 3: mechanical passes, attributed to the diff
 
 Run the project's own tools, pinned to the versions the project pins. A finding a
@@ -112,15 +145,60 @@ findings against the diff destroys your credibility in one shot. Get the added
 line numbers from `git diff -U0` and intersect. "255 errors, 0 on added lines" is
 a real and useful result, and the opposite conclusion from "255 errors".
 
-Do the same for anything else the repo enforces: a convention sweep (module
-docstrings, banned imports, non-ASCII where the project is ASCII-only), an import
-smoke test on new modules, and the test suite for a baseline. Note skipped tests
--- a test silently skipped for a year is a finding.
+Do the same for anything else the repo enforces: an import smoke test on new
+modules, and the test suite for a baseline. Note skipped tests -- a test silently
+skipped for a year is a finding.
+
+Run the convention check, which reads the head ref and reports leads on added lines
+only:
+
+```bash
+python /Users/jesse.grabowski/.claude/skills/lazy-review/scripts/convention_check.py --repo <checkout> --base origin/<base> --head origin/<head>
+```
+
+It flags module docstrings outside `__init__.py`, full docstrings with no Returns
+section on functions that return a value, Raises and Warns sections, history or
+corrective wording in comments, docstrings and yaml comments, section-divider
+comments, `__future__` imports, non-ASCII, positional arguments to callables the
+repo defines, new source modules with no mirrored test file, and new bool or
+string-mode parameters and dataclass fields on functions and classes that already
+existed, the shape of a fix shipped behind a default-off switch. Every line it
+prints is a lead. Check each against `00_rules.md` and the code, then keep or drop
+it in `01_inventory.md`. A rule in `00_rules.md` that the script does not cover
+still gets checked, by a pass agent or by hand.
 
 ## Phase 4: the chosen passes
 
-Run what the user approved. Feed each pass the real scope and the concern from
-`$ARGUMENTS`.
+Run what the user approved. Feed each pass the real scope, `00_rules.md`, and the
+concern from `$ARGUMENTS`.
+
+One agent per pass. Never run two passes in one agent, and never fold a pass into
+an explore agent or into the agent reviewing a whole PR. Each skill is built to
+drive a full review, and several run back to back in one context come out as
+summaries. When reviewing several PRs, each PR gets its own set of pass agents.
+
+How a pass agent runs its pass:
+
+- A skill the Skill tool can load gets loaded with it, in report-only mode.
+- A skill marked `disable-model-invocation: true` (every `audit:*` pass) cannot be
+  loaded. When the user approved it in Phase 1, the agent reads that `SKILL.md` at
+  its path and follows it in full. A pass the user did not approve does not run.
+- A pass that did not run is recorded as not run, in `02_findings.md` and in the
+  chat summary. Nothing is ever recorded as done "inline from its checklist" under
+  the pass's name.
+
+Each pass report opens with three lines: how the skill was invoked (Skill tool or
+read from its file), the files it covered, and confirmation that `00_rules.md` was
+applied.
+
+A pass that compares the diff with peer files, such as `when-in-rome`, cannot see a
+deviation the exemplar shares. Code copied from a sibling that breaks a rule in
+`00_rules.md` is still a convention finding. Record "same in `<sibling>`" in the
+notes and keep the finding.
+
+Before Phase 5, check each pass report against what it should have covered. A pass
+that returns nothing new on a diff of more than a few hundred lines gets re-read,
+not accepted.
 
 ## Phase 5: consolidate
 
@@ -141,8 +219,14 @@ Sort findings by what they cost:
    function -- things that make the blockers hard to fix.
 3. **Shape.** Files that belong in another PR, committed data, scope creep. Often
    the largest line-count reduction available and the easiest to agree on.
-4. **Conventions.** Stated rules broken. Count the sites in the notes. The
-   comment names the rule and the site it sits on.
+4. **Conventions.** Rules in `00_rules.md` broken, whether the repo writes them
+   down or only the user's `CLAUDE.md` and memory do. Count the sites in the notes.
+   The comment names the rule and the site it sits on.
+
+Close `02_findings.md` with a coverage table: one row per rule in `00_rules.md`,
+marked checked, not applicable, or not checked, with how it was checked. Show the
+not-checked rows to the user with the draft. A rule nobody checked is a gap in the
+review, and the user decides whether it matters.
 
 ## Phase 6: draft the review
 
