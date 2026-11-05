@@ -259,8 +259,18 @@ layout, and the payload format the posting script reads.
 Tag every finding **confirmed** (you read the chain) or **suspected** (mechanism
 plausible, not traced). The chain is recorded in `02_findings.md` and nowhere
 else. A comment never demonstrates that you read it. A suspected finding gets
-verified before the review, or it gets dropped. It does not get downgraded into a question -- a question is for
-what the code cannot answer, not for a hunch you ran out of time to check.
+verified before the review, or it gets dropped. It does not get downgraded into a
+question -- a question is for what the code cannot answer, not for a hunch you ran
+out of time to check.
+
+Every finding ends with a disposition: the payload id it became, held for
+clearance, or dropped with the reason in one clause. A dropped blocker needs the
+reason most, because the event was chosen on its account.
+
+A defensive guard is a finding only when some input that reaches the code can
+trip it. Proposing a check, a validation or a test for a state no caller can
+produce adds code the user will delete. "Can this fire?" applies to the review's
+own suggestions as much as to the author's code.
 
 Sort findings by what they cost:
 
@@ -371,13 +381,22 @@ site gets its own comment of about five words pointing back -- "duplicate
 how a review reaches a third of its comments under ten words, and they are the
 cheapest useful thing here.
 
+This holds at every count. Forty-six sites get forty-six comments, never one per
+file listing line numbers. A large count does not bury a blocker, because the
+event and the body name the blocker. The base branch doing the same thing
+elsewhere does not excuse a site either, because the rule judges the lines this
+PR adds.
+
 So the target comes out of the shape of the set, not out of compression. If the
 draft has no comments under ten words, the usual cause is repeats that got merged,
 not prose that needs trimming. A comment that genuinely resists cutting is either a
 real mechanism finding, which is fine and rare, or a teaching comment, which needs
 clearance.
 
-Three shapes carry almost everything. The imperative is the least common of them.
+Three shapes carry almost everything. In the posted record the edit outnumbers
+the question by about fourteen to one, and authors acted on edits and nits more
+often than on questions (93% and 98% against 81%), with most pushback landing on
+questions.
 
 **The edit.** What to change, plus at most one sentence of reason. The reason
 exists only when the author would push back without it.
@@ -396,10 +415,24 @@ statement of what turns on the answer unless that is genuinely unobvious.
 
 > Do we need a whole new file for this?
 
+The questions that work are the ones whose honest answer is the edit: "Is this
+check possible to fail?" got "No, removed" every time it was posted. When the
+finding is confirmed and the edit is known, write the edit. "Why a second name?"
+over a duplicate the review has already traced is an edit wearing a question
+mark.
+
+Before asking "intended?" about a behavior change, read the PR body and the
+commit messages. The questions that drew pushback asked about changes the author
+had made on purpose and explained.
+
 A question is not a softened instruction and never a finding you failed to
 verify. A suspected finding gets verified or dropped. Turning it into a question
 is the single most likely way this skill degrades, because a question costs
 nothing to write and looks like diligence.
+
+Ask for one remedy. "Make it point-in-time or say so in the runbook" lets the
+author take the cheaper branch, and authors did, every time. When documenting
+the limitation is genuinely acceptable, ask for that alone.
 
 **The suggestion block.** When the fix is a literal token swap, paste it. Add a
 sentence only when the swap does not explain itself.
@@ -515,7 +548,7 @@ what they should have been.
 
 > **Make this opt-in and loud, or restore the real query.** `delta_bp=0.0` here reaches `linprog/result.py:42`, where `eqty_allocation = -allocation_sod / 1000 * delta_bp` becomes identically 0, taking `eqty_pos_pnl` and `gmv_eqty_allocation_sod` with it -- the LP engine's whole equity hedge leg. `long_dur_lp.py`, added in this PR, reaches it via `long_liquid_book.load_universe:78`, so any LP number in the memo has no equity hedge and doesn't disclose it. The comment says "only `backtest/linprog/result.py` reads `delta_bp`" -- that file is the consumer. Fix: `opscore: Literal["query", "disabled"] = "query"`, `RuntimeWarning` on the disabled branch. If `opscore_straights_results` no longer resolves `delta_bp`, that's an upstream schema fix, not a silent literal. Note the table-name fix at `data_utils.py:1739` now has zero live callers, so it's unverified.
 
-> Make the `delta_bp` stub opt-in and warn when it's on, or restore the query. Stubbing it to zero removes the LP engine's equity hedge, and `long_dur_lp.py` reaches this path.
+> Restore the `delta_bp` query. Stubbing it to zero removes the LP engine's equity hedge, and `long_dur_lp.py` reaches this path.
 
 > Index the multiplier off the `_tenor_bucket` column rather than off `tb`. `tb` was computed at line 163 from the pre-join frame; `w` here is post-join, and polars documents `maintain_order` as defaulting to `'none'`. Order does hold on the pinned 1.42.1 (checked, 0/200,000 rows mismatched), so today's numbers are fine; a polars bump permutes the level correction with nothing raising. `_tenor_bucket` survives the join until line 195, so it's a one-line swap. The test can't catch this either -- `test_liq_tc.py:140` says "only bucket 1 is exercised by this panel". Worth a second test row in another bucket. Separately, `.drop("_mult", strict=False)` on line 187 is a no-op.
 
